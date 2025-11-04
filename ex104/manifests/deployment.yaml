@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ex101-log-output
+  name: ex104-web-server
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ex101
+      app: ex104
   template:
     metadata:
       labels:
-        app: ex101
+        app: ex104
     spec:
       containers:
-        - name: ex101
-          image: dilansachi/devopswk8s-ex101:1.0.0
+        - name: ex104
+          image: dilansachi/devopswk8s-ex104:1.0.0
           imagePullPolicy: IfNotPresent

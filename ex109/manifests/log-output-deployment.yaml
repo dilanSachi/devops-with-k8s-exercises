@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex109-log-output
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex109-log-output
+  template:
+    metadata:
+      labels:
+        app: ex109-log-output
+    spec:
+      containers:
+        - name: ex109-log-output
+          image: dilansachi/devopswk8s-ex107:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3001"

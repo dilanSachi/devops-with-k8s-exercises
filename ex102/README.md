@@ -1,4 +1,4 @@
-## Ex1.1
+## Ex1.2
 
 ### How to run
 #### Build & run locally using k3d

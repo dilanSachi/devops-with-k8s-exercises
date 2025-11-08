@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex105-web-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex105
+  template:
+    metadata:
+      labels:
+        app: ex105
+    spec:
+      containers:
+        - name: ex105
+          image: dilansachi/devopswk8s-ex105:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3001"

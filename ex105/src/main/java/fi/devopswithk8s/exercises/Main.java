@@ -15,20 +15,33 @@ public class Main {
         try {
             port = Integer.parseInt(System.getenv("PORT"));
         } catch (NumberFormatException e) {
-            System.out.println("PORT variable not found. Starting on default port.");
+            System.out.println("PORT variable not found. Starting on default port " + port);
         }
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/", new MyHandler());
         server.setExecutor(null);
         server.start();
-        System.out.println("Server started in port 3000");
+        System.out.println("Server started in port " + port);
     }
 
     static class MyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException
         {
-            String response = "Hello, this is a simple HTTP server response!";
+            String response = "<!DOCTYPE html>\n" +
+                    "<html>\n" +
+                    "<head>\n" +
+                    "<title>DevOps</title>\n" +
+                    "</head>\n" +
+                    "<body>\n" +
+                    "\n" +
+                    "<h1>This is a simple header!</h1>\n" +
+                    "<p>Hello, this is a simple HTTP server response!</p>\n" +
+                    "\n" +
+                    "</body>\n" +
+                    "</html>";
+            Headers headers = exchange.getResponseHeaders();
+            headers.add("Content-Type", "text/html; charset=utf-8");
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());

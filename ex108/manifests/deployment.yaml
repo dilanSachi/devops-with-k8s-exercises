@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex108-web-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex108
+  template:
+    metadata:
+      labels:
+        app: ex108
+    spec:
+      containers:
+        - name: ex108
+          image: dilansachi/devopswk8s-ex108:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3001"

@@ -8,6 +8,7 @@
 #### Run using image in DockerHub
 * Execute `kubectl apply -f manifests/deployment.yaml` to deploy the application.
 
+---
 
 * Execute `kubectl apply -f manifests/service.yaml` to apply the service.
 * Server would be available in http://localhost:8082.

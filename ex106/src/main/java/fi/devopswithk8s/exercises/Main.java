@@ -8,8 +8,12 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.util.UUID;
 
 public class Main {
+
+    static String applicationId = UUID.randomUUID().toString();
+
     public static void main(String[] args) throws IOException {
         int port = 3000;
         try {
@@ -35,8 +39,8 @@ public class Main {
                     "</head>\n" +
                     "<body>\n" +
                     "\n" +
-                    "<h1>This is a simple header!</h1>\n" +
-                    "<p>Hello, this is a simple HTTP server response!</p>\n" +
+                    "<h1>Application " + applicationId + "!</h1>\n" +
+                    "<p>This is a simple response! - " + UUID.randomUUID() + "</p>\n" +
                     "\n" +
                     "</body>\n" +
                     "</html>";

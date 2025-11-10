@@ -12,3 +12,4 @@ This repo contains the exercises and projects done in the course [DevOps with Ku
 - [1.7](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/1.7/ex107)
 - [1.8](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/1.8/ex108)
 - [1.9](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/1.9/ex109)
+- [1.10](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/1.10/ex110)

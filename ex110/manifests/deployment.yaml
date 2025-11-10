@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex110
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex110
+  template:
+    metadata:
+      labels:
+        app: ex110
+    spec:
+      volumes:
+        - name: shared-log-file
+          emptyDir: { }
+      containers:
+        - name: ex110-log-writer
+          image: dilansachi/devopswk8s-ex110-log-writer:1.0.0
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: shared-log-file
+              mountPath: /usr/src/app/files
+        - name: ex110-log-reader
+          image: dilansachi/devopswk8s-ex110-log-reader:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3001"
+          volumeMounts:
+            - name: shared-log-file
+              mountPath: /usr/src/app/files

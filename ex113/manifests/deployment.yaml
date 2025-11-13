@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex113
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex113
+  template:
+    metadata:
+      labels:
+        app: ex113
+    spec:
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: ex113-vol-claim
+      containers:
+        - name: ex113-image-application
+          image: dilansachi/devopswk8s-ex113-image-application:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3002"
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files

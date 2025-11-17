@@ -1,4 +1,4 @@
-## Ex1.123
+## Ex1.13
 
 ### How to run
 For the PersistentVolume to work we need to create the local path in the node we are binding it to. Since this cluster runs via Docker, create a directory at `/tmp/kube` in the container `k3d-k3s-default-agent-0`. This can simply be done via `docker exec k3d-k3s-default-agent-0 mkdir -p /tmp/kube`.

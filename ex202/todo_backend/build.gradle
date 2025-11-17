@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+}
+
+group = 'fi.devopswithk8s.exercises'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'fi.devopswithk8s.exercises.TodoBackend'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task buildDockerImage(type: Exec) {
+    workingDir '.'
+    commandLine 'docker', 'build', '-t', 'dilansachi/devopswk8s-ex202-todo-backend:1.0.0', '.'
+}
+
+build.finalizedBy buildDockerImage

@@ -51,7 +51,7 @@ public class LogReader {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            String response = "file content: " + fileContent + "\n" + "env variable: " + System.getenv("MESSAGE") + "\n" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new java.util.Date()) + ": " + randomString + "\n" + "Ping / Pongs: " + counter;
+            String response = "file content: " + fileContent + "\n" + "env variable: MESSAGE=" + System.getenv("MESSAGE") + "\n" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new java.util.Date()) + ": " + randomString + "\n" + "Ping / Pongs: " + counter;
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex205
+  namespace: exercises
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex205
+  template:
+    metadata:
+      labels:
+        app: ex205
+    spec:
+      containers:
+        - name: ex205-ping-pong-application
+          image: dilansachi/devopswk8s-ex205-ping-pong-application:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3003"
+        - name: ex205-log-reader
+          image: dilansachi/devopswk8s-ex205-log-reader:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3002"
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: config-map
+                  key: MESSAGE
+          volumeMounts:
+            - name: config-vol
+              mountPath: "/config-vol"
+              readOnly: true
+      volumes:
+        - name: config-vol
+          configMap:
+            name: config-map
+            items:
+              - key: "information.txt"
+                path: "information.txt"

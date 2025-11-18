@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex204
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex204
+  template:
+    metadata:
+      labels:
+        app: ex204
+    spec:
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: ex204-vol-claim
+      containers:
+        - name: ex204-todo-app
+          image: dilansachi/devopswk8s-ex204-todo-app:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3002"
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files
+        - name: ex204-todo-backend
+          image: dilansachi/devopswk8s-ex204-todo-backend:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3003"

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-map
+  namespace: project
+data:
+  image_file_path: "/usr/src/app/files/image.png"
+  image_resource_url: "https://picsum.photos/1200"
+  backend_url: "http://localhost:8081"

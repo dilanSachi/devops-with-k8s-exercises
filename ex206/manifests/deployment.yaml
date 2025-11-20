@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex206
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex206
+  template:
+    metadata:
+      labels:
+        app: ex206
+    spec:
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: ex206-vol-claim
+      containers:
+        - name: ex206-todo-app
+          image: dilansachi/devopswk8s-ex206-todo-app:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3002"
+            - name: IMAGE_FILE_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: config-map
+                  key: image_file_path
+            - name: IMAGE_RESOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: config-map
+                  key: image_resource_url
+            - name: BACKEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: config-map
+                  key: backend_url
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files
+        - name: ex206-todo-backend
+          image: dilansachi/devopswk8s-ex206-todo-backend:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3003"

@@ -1,0 +1,52 @@
+plugins {
+    id 'java'
+}
+
+group = 'fi.devopswithk8s.exercises'
+version = '1.0-SNAPSHOT'
+def dockerImageName = 'dilansachi/devopswk8s-ex207-ping-pong-application:1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'fi.devopswithk8s.exercises.PingPongApplication'
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+dependencies {
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.8'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task buildDockerImage(type: Exec) {
+    workingDir '.'
+    commandLine 'docker', 'build', '-t', dockerImageName, '.'
+}
+
+task importDockerImageToK3d() {
+    doLast {
+        def checkK3d = "k3d --version".execute()
+        checkK3d.waitFor()
+        if (checkK3d.exitValue() != 0) {
+            println "k3d is not installed or not in PATH. Hence skipping image import."
+            return
+        }
+        def importCmd = "k3d image import ${dockerImageName}".execute()
+        importCmd.waitForProcessOutput(System.out, System.err)
+    }
+}
+
+importDockerImageToK3d.dependsOn buildDockerImage
+build.finalizedBy importDockerImageToK3d

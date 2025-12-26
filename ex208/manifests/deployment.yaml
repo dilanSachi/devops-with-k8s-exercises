@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex208
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex208
+  template:
+    metadata:
+      labels:
+        app: ex208
+    spec:
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: ex208-vol-claim
+      containers:
+        - name: ex208-todo-app
+          image: dilansachi/devopswk8s-ex208-todo-app:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3002"
+            - name: BACKEND_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex208-config-map
+                  key: backend_url
+            - name: IMAGE_FILE_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: ex208-config-map
+                  key: image_file_path
+            - name: IMAGE_RESOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex208-config-map
+                  key: image_resource_url
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files
+        - name: ex208-todo-backend
+          image: dilansachi/devopswk8s-ex208-todo-backend:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3003"
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: ex208-config-map
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: ex208-config-map
+                  key: DB_PASSWORD
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex208-config-map
+                  key: DB_URL

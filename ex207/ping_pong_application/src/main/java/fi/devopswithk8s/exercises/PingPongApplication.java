@@ -50,6 +50,19 @@ public class PingPongApplication {
         System.out.println("Connected to db: " + connection.getMetaData().getDatabaseProductVersion());
     }
 
+    private static Connection getDbConnection() throws SQLException {
+        try {
+            connection.getClientInfo();
+        } catch (SQLException e) {
+            try {
+                initDBConnection();
+            } catch (InterruptedException exception) {
+                e.printStackTrace();
+            }
+        }
+        return connection;
+    }
+
     private static class PingsHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException
@@ -78,7 +91,7 @@ public class PingPongApplication {
 
         private void updateCounter() {
             try {
-                Statement st = connection.createStatement();
+                Statement st = getDbConnection().createStatement();
                 st.execute("UPDATE PINGPONGCOUNTER SET COUNTER=((SELECT COUNTER FROM PINGPONGCOUNTER WHERE ID=1) + 1) WHERE ID=1");
                 st.close();
             } catch (SQLException e) {
@@ -89,7 +102,7 @@ public class PingPongApplication {
 
     private static int readCounter() {
         try {
-            Statement st = connection.createStatement();
+            Statement st = getDbConnection().createStatement();
             ResultSet rs = st.executeQuery("SELECT COUNTER FROM PINGPONGCOUNTER WHERE ID=1");
             rs.next();
             int counter = rs.getInt("COUNTER");

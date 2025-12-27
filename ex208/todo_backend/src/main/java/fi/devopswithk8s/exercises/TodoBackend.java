@@ -52,6 +52,19 @@ public class TodoBackend {
         System.out.println("Connected to db: " + connection.getMetaData().getDatabaseProductVersion());
     }
 
+    private static Connection getDbConnection() throws SQLException {
+        try {
+            connection.getClientInfo();
+        } catch (SQLException e) {
+            try {
+                initDBConnection();
+            } catch (InterruptedException exception) {
+                e.printStackTrace();
+            }
+        }
+        return connection;
+    }
+
     static class AddTodoHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException
@@ -68,7 +81,7 @@ public class TodoBackend {
 
         private void insertTodo(String newTodo) {
             try {
-                Statement st = connection.createStatement();
+                Statement st = getDbConnection().createStatement();
                 st.execute("INSERT INTO TODO (TODO) VALUES ('" + newTodo + "')");
                 st.close();
             } catch (SQLException e) {
@@ -99,7 +112,7 @@ public class TodoBackend {
 
         private static List<String> getTodos() {
             try {
-                Statement st = connection.createStatement();
+                Statement st = getDbConnection().createStatement();
                 ResultSet rs = st.executeQuery("SELECT TODO FROM TODO");
                 List<String> todos = new ArrayList<>();
                 while (rs.next()) {

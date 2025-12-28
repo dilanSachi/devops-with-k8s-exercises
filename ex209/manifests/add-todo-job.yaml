@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: ex208-add-todo-job
+  name: ex209-add-todo-job
   namespace: project
 spec:
   schedule: "01 * * * *"
@@ -10,7 +10,7 @@ spec:
       template:
         spec:
           containers:
-            - name: ex208-psql-job-runner
+            - name: ex209-psql-job-runner
               image: postgres:alpine
               imagePullPolicy: IfNotPresent
               command:

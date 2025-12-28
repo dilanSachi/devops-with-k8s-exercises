@@ -28,3 +28,6 @@ This repo contains the exercises and projects done in the course [DevOps with Ku
 - [2.08](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/2.8/ex208)
 - [2.09](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/2.9/ex209)
 - [2.10](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/2.10/ex210)
+
+### Chapter 04
+- [3.01](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/3.1/ex301)

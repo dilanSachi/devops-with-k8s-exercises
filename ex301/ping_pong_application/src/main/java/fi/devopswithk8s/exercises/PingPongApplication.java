@@ -9,25 +9,29 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.sql.*;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PingPongApplication {
 
     private static Connection connection;
+    private static final Logger logger = Logger.getLogger(PingPongApplication.class.getName());
 
     public static void main(String[] args) throws IOException, SQLException, InterruptedException {
         int port = 3000;
         try {
             port = Integer.parseInt(System.getenv("PORT"));
         } catch (NumberFormatException e) {
-            System.out.println("PORT variable not found. Starting on default port " + port);
+            logger.log(Level.SEVERE, "PORT variable not found. Starting on default port " + port);
         }
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/", new PingPongHandler());
         server.createContext("/pings", new PingsHandler());
+        server.createContext("/favicon.ico", new FaviconHandler());
         server.setExecutor(null);
         server.start();
         initDBConnection();
-        System.out.println("Ping Pong Application started in port " + port);
+        logger.log(Level.INFO, "Ping Pong Application started in port " + port);
     }
 
     private static void initDBConnection() throws SQLException, InterruptedException {
@@ -41,13 +45,14 @@ public class PingPongApplication {
             } catch (SQLException e) {
                 if (i == 2) {
                     e.printStackTrace();
+                    logger.log(Level.SEVERE, "Could not connect to db. Shutting down.");
                     System.exit(1);
                 }
-                System.out.println("Could not connect to db. Retrying after a while.");
+                logger.log(Level.INFO, "Could not connect to db. Retrying after a while.");
                 Thread.sleep(5000);
             }
         }
-        System.out.println("Connected to db: " + connection.getMetaData().getDatabaseProductVersion());
+        logger.log(Level.INFO, "Connected to db: " + connection.getMetaData().getDatabaseProductVersion());
     }
 
     private static Connection getDbConnection() throws SQLException {
@@ -63,11 +68,22 @@ public class PingPongApplication {
         return connection;
     }
 
+    private static class FaviconHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException
+        {
+            logger.log(Level.INFO, "Responding 404 for favicon request.");
+            exchange.sendResponseHeaders(404, 0);
+            OutputStream os = exchange.getResponseBody();
+            os.close();
+        }
+    }
+
     private static class PingsHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException
         {
-            System.out.println("Responding num of pings to log reader." + readCounter());
+            logger.log(Level.INFO, "Responding num of pings to log reader." + readCounter());
             String response = String.valueOf(readCounter());
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
@@ -81,6 +97,7 @@ public class PingPongApplication {
         @Override
         public void handle(HttpExchange exchange) throws IOException
         {
+            logger.log(Level.INFO, "Got a ping from client.");
             String response = "pong " + readCounter();
             updateCounter();
             exchange.sendResponseHeaders(200, response.length());
@@ -92,6 +109,7 @@ public class PingPongApplication {
         private void updateCounter() {
             try {
                 Statement st = getDbConnection().createStatement();
+                logger.log(Level.INFO, "Updating counter.");
                 st.execute("UPDATE PINGPONGCOUNTER SET COUNTER=((SELECT COUNTER FROM PINGPONGCOUNTER WHERE ID=1) + 1) WHERE ID=1");
                 st.close();
             } catch (SQLException e) {

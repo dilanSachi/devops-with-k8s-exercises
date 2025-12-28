@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: ex301-ping-pong-application
-          image: dilansachi/devopswk8s-ex301-ping-pong-application:1.0.0
-          imagePullPolicy: IfNotPresent
+          image: dilansachi/devopswk8s-ex301-ping-pong-application:latest
+          imagePullPolicy: Always
           env:
             - name: PORT
               value: "3003"
@@ -36,8 +36,8 @@ spec:
                   name: ex301-config-map
                   key: DB_URL
         - name: ex301-log-reader
-          image: dilansachi/devopswk8s-ex301-log-reader:1.0.0
-          imagePullPolicy: IfNotPresent
+          image: dilansachi/devopswk8s-ex301-log-reader:latest
+          imagePullPolicy: Always
           env:
             - name: PORT
               value: "3002"

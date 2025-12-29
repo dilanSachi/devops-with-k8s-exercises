@@ -12,4 +12,5 @@
 
 ---
 
-* Server would be available in http://EXTERNAL-IP:2345 and http://EXTERNAL-IP:2346.
+* Server would be available in http://EXTERNAL-IP and http://EXTERNAL-IP/pingpong.
+* `EXTERNAL-IP` can be found from `kubectl get ingress`

@@ -25,7 +25,8 @@ public class PingPongApplication {
             logger.log(Level.SEVERE, "PORT variable not found. Starting on default port " + port);
         }
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/", new PingPongHandler());
+        server.createContext("/", new HealthCheckHandler());
+        server.createContext("/pingpong", new PingPongHandler());
         server.createContext("/pings", new PingsHandler());
         server.createContext("/favicon.ico", new FaviconHandler());
         server.setExecutor(null);
@@ -66,6 +67,17 @@ public class PingPongApplication {
             }
         }
         return connection;
+    }
+
+    private static class HealthCheckHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException
+        {
+            logger.log(Level.INFO, "Responding 200 for healthcheck request.");
+            exchange.sendResponseHeaders(200, 0);
+            OutputStream os = exchange.getResponseBody();
+            os.close();
+        }
     }
 
     private static class FaviconHandler implements HttpHandler {

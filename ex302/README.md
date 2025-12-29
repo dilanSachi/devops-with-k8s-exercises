@@ -12,4 +12,4 @@
 
 ---
 
-* Server would be available in http://<EXTERNAL-IP>:2345 and http://<EXTERNAL-IP>:2346.
+* Server would be available in http://EXTERNAL-IP:2345 and http://EXTERNAL-IP:2346.

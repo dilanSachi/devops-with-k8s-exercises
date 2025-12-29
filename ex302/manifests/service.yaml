@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ex301-svc
+  name: ex302-svc
   namespace: exercises
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
-    app: ex301
+    app: ex302
   ports:
     - name: log-reader
       port: 2345

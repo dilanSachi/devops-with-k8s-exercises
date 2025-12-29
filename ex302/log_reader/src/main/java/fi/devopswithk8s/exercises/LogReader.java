@@ -28,14 +28,14 @@ public class LogReader {
             logger.log(Level.SEVERE, "PORT variable not found. Starting on default port " + port);
         }
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/", new MyHandler());
+        server.createContext("/", new LogHandler());
         server.createContext("/favicon.ico", new FaviconHandler());
         server.setExecutor(null);
         server.start();
         logger.log(Level.INFO, "Server started in port " + port);
     }
 
-    static class MyHandler implements HttpHandler {
+    static class LogHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             String counter = "0";

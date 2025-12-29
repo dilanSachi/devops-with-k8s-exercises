@@ -4,7 +4,7 @@ plugins {
 
 group = 'fi.devopswithk8s.exercises'
 version = '1.0-SNAPSHOT'
-def dockerImageName = 'dilansachi/devopswk8s-ex301-ping-pong-application:latest'
+def dockerImageName = 'dilansachi/devopswk8s-ex302-ping-pong-application:latest'
 
 repositories {
     mavenCentral()

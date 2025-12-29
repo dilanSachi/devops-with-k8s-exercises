@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: ex301-postgres-stset
+  name: ex302-postgres-stset
   namespace: exercises
 spec:
-  serviceName: ex301-postgres-svc
+  serviceName: ex302-postgres-svc
   replicas: 1
   selector:
     matchLabels:
-      app: ex301-postgresapp
+      app: ex302-postgresapp
   template:
     metadata:
       labels:
-        app: ex301-postgresapp
+        app: ex302-postgresapp
     spec:
       containers:
         - name: postgres
@@ -33,7 +33,7 @@ spec:
       volumes:
         - name: init-vol
           configMap:
-            name: ex301-config-map
+            name: ex302-config-map
             items:
               - key: "init-db.sql"
                 path: "init-db.sql"
@@ -49,10 +49,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ex301-postgres-svc
+  name: ex302-postgres-svc
   namespace: exercises
   labels:
-    app: ex301-postgres
+    app: ex302-postgres
 spec:
   ports:
     - port: 5432
@@ -61,4 +61,4 @@ spec:
       targetPort: 5432
   clusterIP: None
   selector:
-    app: ex301-postgresapp
+    app: ex302-postgresapp

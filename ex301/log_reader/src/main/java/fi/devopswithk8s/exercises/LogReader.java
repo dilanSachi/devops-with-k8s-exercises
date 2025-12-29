@@ -28,7 +28,7 @@ public class LogReader {
             logger.log(Level.SEVERE, "PORT variable not found. Starting on default port " + port);
         }
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/", new MyHandler());
+        server.createContext("/", new fi.devopswithk8s.exercises.LogReader.LogHandler());
         server.createContext("/favicon.ico", new FaviconHandler());
         server.setExecutor(null);
         server.start();

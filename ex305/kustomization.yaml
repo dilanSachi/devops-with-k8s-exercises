@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - manifests/persistent-volume-claim.yaml
+  - manifests/configmap.yaml
+  - manifests/postgres-sts.yaml
+  - manifests/deployment.yaml
+  - manifests/service.yaml
+  - manifests/gateway.yaml
+  - manifests/route.yaml
+  - manifests/add-todo-job.yaml
+images:
+  - name: PROJECT/TODO_APP_IMAGE
+    newName: dilansachi/devopswk8s-ex305-todo-app:1.0.1
+  - name: PROJECT/TODO_BACKEND_IMAGE
+    newName: dilansachi/devopswk8s-ex305-todo-backend:1.0.1

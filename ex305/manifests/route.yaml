@@ -1,0 +1,36 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: ex305-route
+spec:
+  parentRefs:
+    - name: ex305-gateway
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: ex305-svc
+          port: 2345
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /image
+      backendRefs:
+        - name: ex305-svc
+          port: 2345
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /gettodos
+      backendRefs:
+        - name: ex305-svc
+          port: 2346
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /addtodo
+      backendRefs:
+        - name: ex305-svc
+          port: 2346

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ex304-config-map
+  namespace: exercises
+data:
+  MESSAGE: "hello world"
+  information.txt: |-
+    this text is from file
+  PING_PONG_APP_URL: "http://ex304-svc:2346/pings"
+  init-db.sql: |-
+    create table PINGPONGCOUNTER
+    (
+        id      int,
+        counter int
+    );
+    insert into PINGPONGCOUNTER (id, counter)
+    values (1, 0);
+  DB_USER: "postgres"
+  DB_PASSWORD: "postgres_pass"
+  DB_URL: "ex304-postgres-svc/"

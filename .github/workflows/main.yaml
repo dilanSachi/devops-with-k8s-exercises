@@ -4,6 +4,10 @@ on:
   push:
     paths:
       - 'ex306/**'
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
   workflow_dispatch:
 
 env:

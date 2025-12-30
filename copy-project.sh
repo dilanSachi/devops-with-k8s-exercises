@@ -30,5 +30,6 @@ find "$DEST" -type f \( -name "*" \) -exec sed -i "s/${SRC}/${DEST}/g" {} +
 OLD_VER="${SRC:2:1}.${SRC:3:2}"
 NEW_VER="${DEST:2:1}.${DEST:3:2}"
 sed -i "s/${OLD_VER}/${NEW_VER}/g" "${DEST}/README.md"
+sed -i "s/${SRC}/${DEST}/g" .github/workflows/*
 
 echo "Successfully copied '$SRC' to '$DEST'"

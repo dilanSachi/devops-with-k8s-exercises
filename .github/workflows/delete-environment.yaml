@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
       - name: 'Set namespace'
         run: |
-          if [[ "$BRANCH" = "main" ]]
+          if [[ "$BRANCH" = "refs/heads/main" ]] || [[ "$BRANCH" = "main" ]]
           then
             echo "NAMESPACE=project" >> $GITHUB_ENV
           else

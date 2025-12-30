@@ -10,6 +10,7 @@ on:
 
 env:
   BRANCH: ${{ github.ref_name }}
+  BRANCH2: ${{ github.event.ref }}
   DIRECTORY: "ex308"
 jobs:
   build-publish-deploy:
@@ -23,3 +24,4 @@ jobs:
       - name: 'Set namespace'
         run: |
             echo "Branch is $BRANCH"
+            echo "Branch2 is $BRANCH2"

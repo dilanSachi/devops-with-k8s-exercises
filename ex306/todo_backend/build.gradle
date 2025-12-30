@@ -4,7 +4,7 @@ plugins {
 
 group = 'fi.devopswithk8s.exercises'
 version = '1.0-SNAPSHOT'
-def dockerImageName = 'dilansachi/devopswk8s-ex306-todo-backend:1.0.1'
+def dockerImageName = project.getProperty("image_tag")
 
 repositories {
     mavenCentral()
@@ -37,26 +37,30 @@ task buildDockerImage(type: Exec) {
 
 task importDockerImageToK3d() {
     doLast {
-        def checkK3d = "k3d --version".execute()
-        checkK3d.waitFor()
-        if (checkK3d.exitValue() != 0) {
-            println "k3d is not installed or not in PATH. Hence skipping image import."
-            return
+        if (project.getProperty("skip_local_image_build") == "0") {
+            def checkK3d = "k3d --version".execute()
+            checkK3d.waitFor()
+            if (checkK3d.exitValue() != 0) {
+                println "k3d is not installed or not in PATH. Hence skipping image import."
+                return
+            }
+            def importCmd = "k3d image import ${dockerImageName}".execute()
+            importCmd.waitForProcessOutput(System.out, System.err)
         }
-        def importCmd = "k3d image import ${dockerImageName}".execute()
-        importCmd.waitForProcessOutput(System.out, System.err)
     }
 }
 
 task uploadDockerImageToDockerHub() {
     doLast {
-        def pushImage = "docker push ${dockerImageName}".execute()
-        pushImage.waitFor()
-        if (pushImage.exitValue() != 0) {
-            println "Failed to push docker image: ${dockerImageName} to docker hub."
-            return
+        if (project.getProperty("skip_local_image_build") == "0") {
+            def pushImage = "docker push ${dockerImageName}".execute()
+            pushImage.waitFor()
+            if (pushImage.exitValue() != 0) {
+                println "Failed to push docker image: ${dockerImageName} to hub."
+                return
+            }
+            println "Pushed docker image: ${dockerImageName} to hub successfully."
         }
-        println "Pushed docker image: ${dockerImageName} to docker hub successfully."
     }
 }
 

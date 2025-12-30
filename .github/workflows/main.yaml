@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'ex306/**'
+  workflow_dispatch:
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
@@ -20,6 +21,8 @@ jobs:
   build-publish-deploy:
     name: Build, Publish and Deploy
     runs-on: ubuntu-latest
+    environment:
+      name: dwk-env
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,7 +50,9 @@ jobs:
           distribution: 'temurin'
           java-version: '23'
       - name: Build and Publish
-        run: sh $DIRECTORY/build.sh
+        run: |
+          cd $DIRECTORY
+          sh build.sh
       - name: Set up Kustomize
         uses: imranismail/setup-kustomize@v2.1.0
       - name: Deploy

@@ -11,4 +11,5 @@ Create a namespace `project` by `kubectl create namespace project`.
 
 ---
 
-* Server would be available in http://localhost:8081.
+* Server would be available in http://EXTERNAL-IP.
+* `EXTERNAL-IP` can be found from `kubectl get gateway ex306-gateway`

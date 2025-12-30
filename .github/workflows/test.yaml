@@ -1,0 +1,27 @@
+name: Test branch
+
+on:
+  delete:
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
+  workflow_dispatch:
+
+env:
+  BRANCH: ${{ github.ref_name }}
+  BRANCH2: ${{ github.event.ref }}
+  DIRECTORY: "ex308"
+jobs:
+  build-publish-deploy:
+    name: Test branch
+    runs-on: ubuntu-latest
+    environment:
+      name: dwk-env
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: 'Set namespace'
+        run: |
+            echo "Branch is $BRANCH"
+            echo "Branch2 is $BRANCH2"

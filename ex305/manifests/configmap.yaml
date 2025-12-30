@@ -21,7 +21,7 @@ data:
     URL="https://en.wikipedia.org/wiki/Special:Random"
     random_url="$(
     curl -sI "$URL" \
-    | awk 'BEGIN{IGNORECASE=1} /^Location:/ {sub(/\r$/, "", $2); print $2}'
+    | awk 'BEGIN{IGNORECASE=1} /^Location:/ {sub(/\r$/, "", $2); print $2}' | tr '\n' ' '
     )"
     export PGPASSWORD='postgres_pass';
     psql postgres://ex305-postgres-svc:5432 -U postgres -c "INSERT INTO TODO(TODO) VALUES('Read $random_url')"

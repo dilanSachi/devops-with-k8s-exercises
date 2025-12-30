@@ -4,7 +4,7 @@ metadata:
   name: ex306-add-todo-job
   namespace: project
 spec:
-  schedule: "* * * * *"
+  schedule: "01 * * * *"
   jobTemplate:
     spec:
       template:

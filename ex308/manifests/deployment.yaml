@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex308
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex308
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ex308
+    spec:
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: ex308-vol-claim
+      containers:
+        - name: ex308-todo-app
+          image: PROJECT/TODO_APP_IMAGE
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3002"
+            - name: IMAGE_FILE_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: ex308-config-map
+                  key: image_file_path
+            - name: IMAGE_RESOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex308-config-map
+                  key: image_resource_url
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files
+        - name: ex308-todo-backend
+          image: PROJECT/TODO_BACKEND_IMAGE
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3003"
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: ex308-config-map
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: ex308-config-map
+                  key: DB_PASSWORD
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex308-config-map
+                  key: DB_URL

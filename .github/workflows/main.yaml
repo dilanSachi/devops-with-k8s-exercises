@@ -3,7 +3,7 @@ name: Release application
 on:
   push:
     paths:
-      - 'ex307/**'
+      - 'ex308/**'
     branches:
       - '**'
     tags-ignore:
@@ -16,11 +16,11 @@ env:
   GKE_ZONE: europe-north1-b
   REGISTRY: europe-north1-docker.pkg.dev
   REPOSITORY: dwk-docker-repo
-  TODO_APP_IMAGE_NAME: devopswk8s-ex307-todo-app
-  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex307-todo-backend
-  SERVICE: ex307
+  TODO_APP_IMAGE_NAME: devopswk8s-ex308-todo-app
+  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex308-todo-backend
+  SERVICE: ex308
   BRANCH: ${{ github.ref_name }}
-  DIRECTORY: "ex307"
+  DIRECTORY: "ex308"
 
 jobs:
   build-publish-deploy:
@@ -46,7 +46,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
       - name: 'Use gcloud CLI'
         run: gcloud info
-      - run: gcloud auth configure-docker europe-north1-docker.pkg.dev --quiet
+      - run: gcloud auth configure-docker $REGISTRY --quiet
       - name: 'Get GKE credentials'
         uses: 'google-github-actions/get-gke-credentials@v2'
         with:

@@ -29,6 +29,12 @@ data:
   backup-psql.sh: |-
     #!/usr/bin/env bash
     set -e
-    pg_dump -v postgres://postgres:postgres_pass@ex310-postgres-svc:5432/postgres > /etc/db-backup/backup-$(date +%s).sql
-    echo "Not sending the dump actually anywhere"
-    # curl -F ‘data=@/usr/src/app/backup.sql’ https://somewhere
+    BACKUP_FILE_NAME="backup-$(date +%s).sql"
+    apt-get update -y
+    apt-get install postgresql-client -y
+    pg_dump -v postgres://postgres:postgres_pass@ex310-postgres-svc:5432/postgres > /etc/db-backup/$BACKUP_FILE_NAME
+    cp $(realpath /etc/secret-volume/GKE_SA_KEY) keyfile
+    gcloud auth activate-service-account --key-file=keyfile
+    gcloud config set project dwk-gke-482611
+    gcloud storage cp /etc/db-backup/$BACKUP_FILE_NAME gs://dwk-bucket/$BACKUP_FILE_NAME
+    echo "Uploaded $BACKUP_FILE_NAME to google storage"

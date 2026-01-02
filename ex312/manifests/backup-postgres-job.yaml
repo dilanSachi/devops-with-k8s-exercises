@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ex312-backup-psql-job
+  namespace: project
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: ex312-backup-psql-gcloud-runner
+              image: google/cloud-sdk:stable
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/bash
+                - -c
+                - cp /tmp/script-vol/backup-psql.sh /etc/backup-script/; chmod +x /etc/backup-script/backup-psql.sh; /etc/backup-script/backup-psql.sh
+              volumeMounts:
+                - name: script-vol
+                  mountPath: "/tmp/script-vol/"
+                - name: backup-script
+                  mountPath: /etc/backup-script
+                - name: db-backup
+                  mountPath: /etc/db-backup
+                - name: secret-volume
+                  readOnly: true
+                  mountPath: /etc/secret-volume
+          restartPolicy: Never
+          volumes:
+            - name: backup-script
+              emptyDir: { }
+            - name: db-backup
+              emptyDir: { }
+            - name: script-vol
+              configMap:
+                name: ex312-config-map
+                items:
+                  - key: "backup-psql.sh"
+                    path: "backup-psql.sh"
+            - name: secret-volume
+              secret:
+                secretName: ex312-gcloud-secret

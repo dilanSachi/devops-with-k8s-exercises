@@ -9,7 +9,9 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class TodoApp {
@@ -23,7 +25,7 @@ public class TodoApp {
         try {
             port = Integer.parseInt(System.getenv("PORT"));
         } catch (NumberFormatException e) {
-            logger.log(Level.INFO, "PORT variable not found. Starting on default port " + port);
+            log("INFO", "PORT variable not found. Starting on default port " + port);
         }
         IMAGE_FILE_PATH = System.getenv("IMAGE_FILE_PATH");
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -31,8 +33,7 @@ public class TodoApp {
         server.createContext("/image", new ImageHandler());
         server.setExecutor(null);
         server.start();
-        logger.log(Level.INFO, "Todo App started in port " + port);
-        System.out.println("Todo App started in port " + port);
+        log("INFO", "Todo App started in port " + port);
     }
 
     static class BodyHandler implements HttpHandler {
@@ -47,7 +48,7 @@ public class TodoApp {
                 lastDownloadedTime = System.currentTimeMillis();
             } else if (System.currentTimeMillis() - lastDownloadedTime > 10 * 60 * 1000) {
                 if (!firstRequest) {
-                    logger.log(Level.INFO, "Time exceeded. Downloading file...");
+                    log("INFO", "Time exceeded. Downloading file...");
                     downloadImage();
                     firstRequest = true;
                 } else {
@@ -139,7 +140,7 @@ public class TodoApp {
                 }
                 lastDownloadedTime = System.currentTimeMillis();
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "Error occurred during image download.");
+                log("ERROR", "Error occurred during image download.");
                 e.printStackTrace();
             }
         }
@@ -156,6 +157,14 @@ public class TodoApp {
             OutputStream outputStream = exchange.getResponseBody();
             Files.copy(file.toPath(), outputStream);
             outputStream.close();
+        }
+    }
+
+    private static void log(String level, String message) {
+        if (level.equals("INFO")) {
+            System.out.println(message);
+        } else {
+            System.err.println(message);
         }
     }
 }

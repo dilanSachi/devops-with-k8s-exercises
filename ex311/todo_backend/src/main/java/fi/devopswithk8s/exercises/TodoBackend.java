@@ -11,7 +11,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class TodoBackend {
@@ -24,7 +26,7 @@ public class TodoBackend {
         try {
             port = Integer.parseInt(System.getenv("PORT"));
         } catch (NumberFormatException e) {
-            logger.log(Level.INFO, "PORT variable not found. Starting on default port " + port);
+            log("INFO", "PORT variable not found. Starting on default port " + port);
         }
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/", new HealthHandler());
@@ -33,7 +35,7 @@ public class TodoBackend {
         server.setExecutor(null);
         server.start();
         initDBConnection();
-        logger.log(Level.INFO, "Todo Backend started in port " + port);
+        log("INFO", "Todo Backend started in port " + port);
     }
 
     private static void initDBConnection() throws SQLException, InterruptedException {
@@ -49,11 +51,11 @@ public class TodoBackend {
                     e.printStackTrace();
                     System.exit(1);
                 }
-                logger.log(Level.INFO, "Could not connect to db. Retrying after a while.");
+                log("INFO", "Could not connect to db. Retrying after a while.");
                 Thread.sleep(5000);
             }
         }
-        logger.log(Level.INFO, "Connected to db: " + connection.getMetaData().getDatabaseProductVersion());
+        log("INFO", "Connected to db: " + connection.getMetaData().getDatabaseProductVersion());
     }
 
     private static Connection getDbConnection() throws SQLException {
@@ -85,12 +87,12 @@ public class TodoBackend {
         {
             InputStream inputStream = exchange.getRequestBody();
             String newTodo = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            logger.log(Level.INFO, "Adding a new todo: " + newTodo);
+            log("INFO", "Adding a new todo: " + newTodo);
             if (newTodo.length() > 140) {
                 exchange.sendResponseHeaders(413, 0);
                 OutputStream os = exchange.getResponseBody();
                 os.close();
-                logger.log(Level.SEVERE, "Todo exceeds the allowed length limit (140): " + newTodo);
+                log("SEVERE", "Todo exceeds the allowed length limit (140): " + newTodo);
                 return;
             }
             insertTodo(newTodo);
@@ -106,7 +108,7 @@ public class TodoBackend {
                 st.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                logger.log(Level.SEVERE, e.getMessage());
+                log("SEVERE", e.getMessage());
             }
         }
     }
@@ -123,7 +125,7 @@ public class TodoBackend {
                     todoList = todoList + ",";
                 }
             }
-            logger.log(Level.INFO, "Responding todos: " + todoList);
+            log("INFO", "Responding todos: " + todoList);
             exchange.sendResponseHeaders(200, todoList.length());
             OutputStream outputStream = exchange.getResponseBody();
             outputStream.write(todoList.getBytes());
@@ -141,9 +143,17 @@ public class TodoBackend {
                 rs.close();
                 return todos;
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, e.getMessage());
+                log("SEVERE", e.getMessage());
                 throw new RuntimeException();
             }
+        }
+    }
+
+    private static void log(String level, String message) {
+        if (level.equals("INFO")) {
+            System.out.println(message);
+        } else {
+            System.err.println(message);
         }
     }
 }

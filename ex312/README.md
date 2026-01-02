@@ -15,3 +15,6 @@ Create a namespace `project` by `kubectl create namespace project`.
 
 * Server would be available in http://EXTERNAL-IP.
 * `EXTERNAL-IP` can be found from `kubectl get gateway ex312-gateway`
+
+* Following are the logs recorded in Google Logs Explorer.
+  ![Logs](/ex312/logs_screenshot.png)

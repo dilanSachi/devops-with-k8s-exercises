@@ -41,11 +41,11 @@ spec:
               mountPath: /usr/src/app/files
           resources:
             limits:
-              cpu: "250m"
-              memory: "250Mi"
-            requests:
-              cpu: "100m"
+              cpu: "200m"
               memory: "100Mi"
+            requests:
+              cpu: "50m"
+              memory: "25Mi"
         - name: ex311-todo-backend
           image: PROJECT/TODO_BACKEND_IMAGE
           imagePullPolicy: IfNotPresent
@@ -69,8 +69,8 @@ spec:
                   key: DB_URL
           resources:
             limits:
-              cpu: "250m"
-              memory: "250Mi"
-            requests:
-              cpu: "100m"
+              cpu: "200m"
               memory: "100Mi"
+            requests:
+              cpu: "50m"
+              memory: "25Mi"

@@ -32,10 +32,10 @@ spec:
               value: "postgres_pass"
           resources:
             limits:
-              cpu: "200m"
+              cpu: "150m"
               memory: "250Mi"
             requests:
-              cpu: "100m"
+              cpu: "50m"
               memory: "100Mi"
       volumes:
         - name: init-vol

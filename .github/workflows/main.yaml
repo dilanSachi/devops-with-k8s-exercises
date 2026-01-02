@@ -3,7 +3,7 @@ name: Release application
 on:
   push:
     paths:
-      - 'ex310/**'
+      - 'ex311/**'
     branches:
       - '**'
     tags-ignore:
@@ -16,11 +16,11 @@ env:
   GKE_ZONE: europe-north1-b
   REGISTRY: europe-north1-docker.pkg.dev
   REPOSITORY: dwk-docker-repo
-  TODO_APP_IMAGE_NAME: devopswk8s-ex310-todo-app
-  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex310-todo-backend
-  SERVICE: ex310
+  TODO_APP_IMAGE_NAME: devopswk8s-ex311-todo-app
+  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex311-todo-backend
+  SERVICE: ex311
   BRANCH: ${{ github.ref_name }}
-  DIRECTORY: "ex310"
+  DIRECTORY: "ex311"
 
 jobs:
   build-publish-deploy:

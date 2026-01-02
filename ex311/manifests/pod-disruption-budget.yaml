@@ -1,0 +1,10 @@
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: ex311-dep-pdb
+  namespace: project
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchLabels:
+      app: ex311

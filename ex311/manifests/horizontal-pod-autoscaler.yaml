@@ -2,6 +2,7 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: ex311-dep-hpa
+  namespace: project
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

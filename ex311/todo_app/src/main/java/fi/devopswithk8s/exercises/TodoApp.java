@@ -32,7 +32,6 @@ public class TodoApp {
         server.setExecutor(null);
         server.start();
         logger.log(Level.INFO, "Todo App started in port " + port);
-        System.out.println("Todo App started in port " + port);
     }
 
     static class BodyHandler implements HttpHandler {

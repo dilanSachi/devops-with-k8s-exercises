@@ -4,9 +4,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 
 public class PingPongApplication {
@@ -27,6 +25,14 @@ public class PingPongApplication {
 
     static class PingHandler implements HttpHandler {
         int counter = 0;
+
+        public PingHandler() throws IOException {
+            File f = new File("/usr/src/app/files/counter.txt");
+            if (f.isFile()) {
+                counter = Integer.parseInt(new String(new FileInputStream("/usr/src/app/files/counter.txt").readAllBytes()));
+            }
+        }
+
         @Override
         public void handle(HttpExchange exchange) throws IOException
         {

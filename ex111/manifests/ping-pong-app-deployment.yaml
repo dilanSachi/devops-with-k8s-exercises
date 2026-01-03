@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ex111
+  name: ex111-ping-pong-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ex111
+      app: ex111-ping-pong-app
   template:
     metadata:
       labels:
-        app: ex111
+        app: ex111-ping-pong-app
     spec:
       volumes:
         - name: shared-volume
@@ -23,15 +23,6 @@ spec:
           env:
             - name: PORT
               value: "3003"
-          volumeMounts:
-            - name: shared-volume
-              mountPath: /usr/src/app/files
-        - name: ex111-log-reader
-          image: dilansachi/devopswk8s-ex111-log-reader:1.0.0
-          imagePullPolicy: IfNotPresent
-          env:
-            - name: PORT
-              value: "3002"
           volumeMounts:
             - name: shared-volume
               mountPath: /usr/src/app/files

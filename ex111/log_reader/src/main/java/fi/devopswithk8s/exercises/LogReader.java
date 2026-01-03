@@ -44,7 +44,10 @@ public class LogReader {
             } finally {
                 fileInputStream.close();
             }
-            String response = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new java.util.Date()) + ": " + randomString + "\n" + "Ping / Pongs: " + counter;
+            fileInputStream = new FileInputStream("/usr/src/app/files/log.txt");
+            String logContent = new String(fileInputStream.readAllBytes());
+            fileInputStream.close();
+            String response = logContent + "Ping / Pongs: " + counter;
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());

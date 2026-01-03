@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ex111-ping-pong-app-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: ex111-ping-pong-app
+  ports:
+    - name: ping-pong-app
+      port: 2346
+      protocol: TCP
+      targetPort: 3003

@@ -35,7 +35,7 @@ jobs:
         run: |
           if [[ "$BRANCH" = "main" ]]
           then
-            echo "NAMESPACE=exercise" >> $GITHUB_ENV
+            echo "NAMESPACE=exercises" >> $GITHUB_ENV
           else
             echo "NAMESPACE=$BRANCH" >> $GITHUB_ENV
           fi

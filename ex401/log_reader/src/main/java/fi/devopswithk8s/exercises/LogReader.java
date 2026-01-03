@@ -8,6 +8,7 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -31,6 +32,7 @@ public class LogReader {
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/", new LogHandler());
         server.createContext("/favicon.ico", new FaviconHandler());
+        server.createContext("/healthz", new HealthHandler());
         server.setExecutor(null);
         server.start();
         logger.log(Level.INFO, "Server started in port " + port);
@@ -49,7 +51,7 @@ public class LogReader {
             }
             String counter = "0";
             try {
-                HttpRequest request = HttpRequest.newBuilder().uri(new URI(System.getenv("PING_PONG_APP_URL"))).GET().build();
+                HttpRequest request = HttpRequest.newBuilder().uri(new URI(System.getenv("PING_PONG_APP_URL") + "/pings")).GET().build();
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 logger.log(Level.INFO, "Received num pings from ping pong app: " + response.body());
                 counter = response.body();
@@ -78,6 +80,41 @@ public class LogReader {
         {
             logger.log(Level.INFO, "Responding 404 for favicon request.");
             exchange.sendResponseHeaders(404, 0);
+            OutputStream os = exchange.getResponseBody();
+            os.close();
+        }
+    }
+
+    private static class HealthHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException
+        {
+            boolean pingPongStatus = false;
+            while (!pingPongStatus) {
+                try {
+                    HttpRequest request = HttpRequest.newBuilder().uri(new URI(System.getenv("PING_PONG_APP_URL") + "/healthz")).GET().build();
+                    HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+                    if (response.statusCode() == 200) {
+                        pingPongStatus = true;
+                    } else {
+                        logger.log(Level.WARNING, "Ping pong app is not up yet. Retry in a few seconds...");
+                        exchange.sendResponseHeaders(400, 0);
+                        OutputStream os = exchange.getResponseBody();
+                        os.close();
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    logger.log(Level.WARNING, "Error occurred while checking ping pong app health. " +
+                            e.getMessage() + " Retry in a few seconds...");
+                    exchange.sendResponseHeaders(401, 0);
+                    OutputStream os = exchange.getResponseBody();
+                    os.close();
+                    return;
+                }
+            }
+            logger.log(Level.INFO, "Responding 200 for health request.");
+            exchange.sendResponseHeaders(200, 0);
             OutputStream os = exchange.getResponseBody();
             os.close();
         }

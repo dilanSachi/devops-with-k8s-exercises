@@ -35,6 +35,12 @@ spec:
                 configMapKeyRef:
                   name: ex401-config-map
                   key: DB_URL
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            httpGet:
+              path: /healthz
+              port: 3003
         - name: ex401-log-reader
           image: PROJECT/LOG_READER_IMAGE
           imagePullPolicy: Always
@@ -55,6 +61,12 @@ spec:
             - name: config-vol
               mountPath: "/config-vol"
               readOnly: true
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            httpGet:
+              path: /healthz
+              port: 3002
       volumes:
         - name: config-vol
           configMap:

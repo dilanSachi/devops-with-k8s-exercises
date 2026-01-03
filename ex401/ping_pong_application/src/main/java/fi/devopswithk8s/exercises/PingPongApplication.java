@@ -30,6 +30,7 @@ public class PingPongApplication {
         server.createContext("/", new PingPongHandler());
         server.createContext("/pings", new PingsHandler());
         server.createContext("/favicon.ico", new FaviconHandler());
+        server.createContext("/healthz", new HealthHandler());
         server.setExecutor(null);
         server.start();
         initDBConnection();
@@ -37,24 +38,29 @@ public class PingPongApplication {
     }
 
     private static void initDBConnection() throws SQLException, InterruptedException {
+        int sleepTime = 5000;
         final String url = "jdbc:postgresql://" + System.getenv("DB_URL");
         final Properties props = new Properties();
         props.setProperty("user", System.getenv("DB_USER"));
         props.setProperty("password", System.getenv("DB_PASSWORD"));
-        for (int i = 0; i < 3; i++) {
-            try {
-                connection = DriverManager.getConnection(url, props);
-            } catch (SQLException e) {
-                if (i == 2) {
-                    e.printStackTrace();
-                    logger.log(Level.SEVERE, "Could not connect to db. Shutting down.");
-                    System.exit(1);
+        while (true) {
+            for (int i = 0; i < 3; i++) {
+                try {
+                    connection = DriverManager.getConnection(url, props);
+                    logger.log(Level.INFO, "Connected to db: " + connection.getMetaData().getDatabaseProductVersion());
+                    return;
+                } catch (SQLException e) {
+                    if (i == 2) {
+                        e.printStackTrace();
+                        sleepTime = sleepTime + 5000;
+                        logger.log(Level.SEVERE, "Could not connect to db. Increasing wait time: " + sleepTime);
+                    } else {
+                        logger.log(Level.INFO, "Could not connect to db. Retrying after a while.");
+                    }
+                    Thread.sleep(sleepTime);
                 }
-                logger.log(Level.INFO, "Could not connect to db. Retrying after a while.");
-                Thread.sleep(5000);
             }
         }
-        logger.log(Level.INFO, "Connected to db: " + connection.getMetaData().getDatabaseProductVersion());
     }
 
     private static Connection getDbConnection() throws SQLException {
@@ -76,6 +82,27 @@ public class PingPongApplication {
         {
             logger.log(Level.INFO, "Responding 404 for favicon request.");
             exchange.sendResponseHeaders(404, 0);
+            OutputStream os = exchange.getResponseBody();
+            os.close();
+        }
+    }
+
+    private static class HealthHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException
+        {
+            try {
+                connection.getClientInfo();
+            } catch (Exception e) {
+                e.printStackTrace();
+                logger.log(Level.INFO, "Responding 402 for health request.");
+                exchange.sendResponseHeaders(402, 0);
+                OutputStream os = exchange.getResponseBody();
+                os.close();
+                return;
+            }
+            logger.log(Level.INFO, "Responding 200 for health request.");
+            exchange.sendResponseHeaders(200, 0);
             OutputStream os = exchange.getResponseBody();
             os.close();
         }

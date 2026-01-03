@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - manifests/statefulset.yaml
+  - manifests/configmap.yaml
+  - manifests/deployment.yaml
+  - manifests/service.yaml
+  - manifests/gateway.yaml
+  - manifests/route.yaml
+images:
+  - name: PROJECT/LOG_READER_IMAGE
+    newName: dilansachi/devopswk8s-ex401-log-reader:1.0.0
+  - name: PROJECT/PING_PONG_APP_IMAGE
+    newName: dilansachi/devopswk8s-ex401-ping-pong-application:1.0.0

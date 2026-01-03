@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ex401-postgres-stset
+  namespace: exercises
+spec:
+  serviceName: ex401-postgres-svc
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex401-postgresapp
+  template:
+    metadata:
+      labels:
+        app: ex401-postgresapp
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16.11-alpine3.23
+          ports:
+            - name: dbport
+              containerPort: 5432
+          volumeMounts:
+            - name: postgres-data-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+            - name: init-vol
+              mountPath: "/docker-entrypoint-initdb.d/"
+              readOnly: true
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "postgres_pass"
+      volumes:
+        - name: init-vol
+          configMap:
+            name: ex401-config-map
+            items:
+              - key: "init-db.sql"
+                path: "init-db.sql"
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-data-storage
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 100Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ex401-postgres-svc
+  namespace: exercises
+  labels:
+    app: ex401-postgres
+spec:
+  ports:
+    - port: 5432
+      name: dbport
+      protocol: TCP
+      targetPort: 5432
+  clusterIP: None
+  selector:
+    app: ex401-postgresapp

@@ -4,6 +4,7 @@ plugins {
 
 group = 'fi.devopswithk8s.exercises'
 version = '1.0-SNAPSHOT'
+def dockerImageName = 'dilansachi/devopswk8s-ex205-ping-pong-application:1.0.0'
 
 repositories {
     mavenCentral()
@@ -30,7 +31,21 @@ test {
 
 task buildDockerImage(type: Exec) {
     workingDir '.'
-    commandLine 'docker', 'build', '-t', 'dilansachi/devopswk8s-ex205-ping-pong-application:1.0.0', '.'
+    commandLine 'docker', 'build', '-t', dockerImageName, '.'
 }
 
-build.finalizedBy buildDockerImage
+task importDockerImageToK3d() {
+    doLast {
+        def checkK3d = "k3d --version".execute()
+        checkK3d.waitFor()
+        if (checkK3d.exitValue() != 0) {
+            println "k3d is not installed or not in PATH. Hence skipping image import."
+            return
+        }
+        def importCmd = "k3d image import ${dockerImageName}".execute()
+        importCmd.waitForProcessOutput(System.out, System.err)
+    }
+}
+
+importDockerImageToK3d.dependsOn buildDockerImage
+build.finalizedBy importDockerImageToK3d

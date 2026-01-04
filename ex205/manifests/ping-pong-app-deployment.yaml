@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex205-ping-pong-app
+  namespace: exercises
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex205-ping-pong-app
+  template:
+    metadata:
+      labels:
+        app: ex205-ping-pong-app
+    spec:
+      containers:
+        - name: ex205-ping-pong-application
+          image: dilansachi/devopswk8s-ex205-ping-pong-application:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3003"

@@ -28,7 +28,7 @@ public class LogReader {
             logger.log(Level.SEVERE, "PORT variable not found. Starting on default port " + port);
         }
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-        server.createContext("/", new fi.devopswithk8s.exercises.LogReader.LogHandler());
+        server.createContext("/", new MyHandler());
         server.createContext("/favicon.ico", new FaviconHandler());
         server.setExecutor(null);
         server.start();
@@ -40,7 +40,7 @@ public class LogReader {
         public void handle(HttpExchange exchange) throws IOException {
             String counter = "0";
             try {
-                HttpRequest request = HttpRequest.newBuilder().uri(new URI(System.getenv("PING_PONG_APP_URL"))).GET().build();
+                HttpRequest request = HttpRequest.newBuilder().uri(new URI(System.getenv("PING_PONG_APP_URL") + "/pings")).GET().build();
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 logger.log(Level.INFO, "Received num pings from ping pong app: " + response.body());
                 counter = response.body();

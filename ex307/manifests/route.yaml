@@ -12,26 +12,26 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: ex307-svc
+        - name: ex307-todo-app-svc
           port: 2345
     - matches:
         - path:
             type: PathPrefix
             value: /image
       backendRefs:
-        - name: ex307-svc
+        - name: ex307-todo-app-svc
           port: 2345
     - matches:
         - path:
             type: PathPrefix
             value: /gettodos
       backendRefs:
-        - name: ex307-svc
+        - name: ex307-todo-backend-svc
           port: 2346
     - matches:
         - path:
             type: PathPrefix
             value: /addtodo
       backendRefs:
-        - name: ex307-svc
+        - name: ex307-todo-backend-svc
           port: 2346

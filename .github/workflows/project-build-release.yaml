@@ -3,7 +3,7 @@ name: Release application
 on:
   push:
     paths:
-      - 'ex306/**'
+      - 'ex307/**'
     branches:
       - '**'
     tags-ignore:
@@ -16,11 +16,11 @@ env:
   GKE_ZONE: europe-north1-b
   REGISTRY: europe-north1-docker.pkg.dev
   REPOSITORY: dwk-docker-repo
-  TODO_APP_IMAGE_NAME: devopswk8s-ex306-todo-app
-  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex306-todo-backend
-  SERVICE: ex306
+  TODO_APP_IMAGE_NAME: devopswk8s-ex307-todo-app
+  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex307-todo-backend
+  SERVICE: ex307
   BRANCH: ${{ github.ref_name }}
-  DIRECTORY: "ex306"
+  DIRECTORY: "ex307"
 
 jobs:
   build-publish-deploy:
@@ -31,6 +31,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: 'Set namespace'
+        run: |
+          if [[ "$BRANCH" = "main" ]]
+          then
+            echo "NAMESPACE=project" >> $GITHUB_ENV
+          else
+            echo "NAMESPACE=$BRANCH" >> $GITHUB_ENV
+          fi
       - uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GKE_SA_KEY }}'
@@ -66,10 +74,13 @@ jobs:
         uses: imranismail/setup-kustomize@v2.1.0
       - name: Deploy
         run: |-
+          kubectl create namespace $NAMESPACE || true
+          kubectl config set-context --current --namespace=$NAMESPACE
           cd $DIRECTORY
+          kustomize edit set namespace $NAMESPACE
           kustomize edit set image PROJECT/TODO_APP_IMAGE=$TODO_APP_IMAGE_TAG
           kustomize edit set image PROJECT/TODO_BACKEND_IMAGE=$TODO_BACKEND_IMAGE_TAG
           kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment $SERVICE-todo-app -nproject
-          kubectl rollout status deployment $SERVICE-todo-backend -nproject
-          kubectl get services -o wide -nproject
+          kubectl rollout status deployment $SERVICE-todo-app
+          kubectl rollout status deployment $SERVICE-todo-backend
+          kubectl get services -o wide

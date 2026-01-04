@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ex207
+  name: ex207-ping-pong-app
   namespace: exercises
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ex207
+      app: ex207-ping-pong-app
   template:
     metadata:
       labels:
-        app: ex207
+        app: ex207-ping-pong-app
     spec:
       containers:
         - name: ex207-ping-pong-application
@@ -35,25 +35,3 @@ spec:
                 configMapKeyRef:
                   name: ex207-config-map
                   key: DB_URL
-        - name: ex207-log-reader
-          image: dilansachi/devopswk8s-ex207-log-reader:1.0.0
-          imagePullPolicy: IfNotPresent
-          env:
-            - name: PORT
-              value: "3002"
-            - name: MESSAGE
-              valueFrom:
-                configMapKeyRef:
-                  name: ex207-config-map
-                  key: MESSAGE
-          volumeMounts:
-            - name: config-vol
-              mountPath: "/config-vol"
-              readOnly: true
-      volumes:
-        - name: config-vol
-          configMap:
-            name: ex207-config-map
-            items:
-              - key: "information.txt"
-                path: "information.txt"

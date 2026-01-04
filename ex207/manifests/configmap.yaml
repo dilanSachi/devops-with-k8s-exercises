@@ -5,6 +5,7 @@ metadata:
   namespace: exercises
 data:
   MESSAGE: "hello world"
+  PING_PONG_URL: "http://ex207-ping-pong-app-svc:2346"
   information.txt: |-
     this text is from file
   init-db.sql: |-

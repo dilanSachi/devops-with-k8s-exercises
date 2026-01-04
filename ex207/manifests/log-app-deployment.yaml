@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex207-log-app
+  namespace: exercises
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex207-log-app
+  template:
+    metadata:
+      labels:
+        app: ex207-log-app
+    spec:
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: ex207-vol-claim
+        - name: config-vol
+          configMap:
+            name: ex207-config-map
+            items:
+              - key: "information.txt"
+                path: "information.txt"
+      containers:
+        - name: ex207-log-reader
+          image: dilansachi/devopswk8s-ex207-log-reader:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3002"
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: ex207-config-map
+                  key: MESSAGE
+            - name: PING_PONG_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex207-config-map
+                  key: PING_PONG_URL
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files
+            - name: config-vol
+              mountPath: "/config-vol"
+              readOnly: true
+        - name: ex207-log-writer
+          image: dilansachi/devopswk8s-ex207-log-writer:1.0.0
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files

@@ -11,27 +11,27 @@ spec:
             pathType: Exact
             backend:
               service:
-                name: ex209-svc
+                name: ex209-todo-app-svc
                 port:
                   number: 2345
           - path: /image
             pathType: Exact
             backend:
               service:
-                name: ex209-svc
+                name: ex209-todo-app-svc
                 port:
                   number: 2345
           - path: /gettodos
             pathType: Exact
             backend:
               service:
-                name: ex209-svc
+                name: ex209-todo-backend-svc
                 port:
                   number: 2346
           - path: /addtodo
             pathType: Exact
             backend:
               service:
-                name: ex209-svc
+                name: ex209-todo-backend-svc
                 port:
                   number: 2346

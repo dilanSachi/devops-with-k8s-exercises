@@ -11,13 +11,13 @@ spec:
             pathType: Exact
             backend:
               service:
-                name: ex203-svc
+                name: ex203-log-app-svc
                 port:
                   number: 2345
           - path: /pingpong
             pathType: Exact
             backend:
               service:
-                name: ex203-svc
+                name: ex203-ping-pong-app-svc
                 port:
                   number: 2346

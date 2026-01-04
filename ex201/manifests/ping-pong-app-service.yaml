@@ -1,16 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ex201-svc
+  name: ex201-ping-pong-app-svc
 spec:
   type: ClusterIP
   selector:
-    app: ex201
+    app: ex201-ping-pong-app
   ports:
-    - name: log-reader
-      port: 2345
-      protocol: TCP
-      targetPort: 3002
     - name: ping-pong-app
       port: 2346
       protocol: TCP

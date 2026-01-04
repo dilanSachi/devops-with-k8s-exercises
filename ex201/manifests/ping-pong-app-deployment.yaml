@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ex201
+  name: ex201-ping-pong-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ex201
+      app: ex201-ping-pong-app
   template:
     metadata:
       labels:
-        app: ex201
+        app: ex201-ping-pong-app
     spec:
       containers:
         - name: ex201-ping-pong-application
@@ -19,9 +19,3 @@ spec:
           env:
             - name: PORT
               value: "3003"
-        - name: ex201-log-reader
-          image: dilansachi/devopswk8s-ex201-log-reader:1.0.0
-          imagePullPolicy: IfNotPresent
-          env:
-            - name: PORT
-              value: "3002"

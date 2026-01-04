@@ -4,7 +4,7 @@ plugins {
 
 group = 'fi.devopswithk8s.exercises'
 version = '1.0-SNAPSHOT'
-def dockerImageName = 'dilansachi/devopswk8s-ex201-log-reader:1.0.0'
+def dockerImageName = 'dilansachi/devopswk8s-ex201-log-writer:1.0.0'
 
 repositories {
     mavenCentral()
@@ -12,7 +12,7 @@ repositories {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'fi.devopswithk8s.exercises.LogReader'
+        attributes 'Main-Class': 'fi.devopswithk8s.exercises.LogWriter'
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from {

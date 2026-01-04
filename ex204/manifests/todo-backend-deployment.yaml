@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex204-todo-backend
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex204-todo-backend
+  template:
+    metadata:
+      labels:
+        app: ex204-todo-backend
+    spec:
+      containers:
+        - name: ex204-todo-backend
+          image: dilansachi/devopswk8s-ex204-todo-backend:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3003"

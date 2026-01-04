@@ -3,7 +3,7 @@ name: Release application
 on:
   push:
     paths:
-      - 'ex308/**'
+      - 'ex310/**'
     branches:
       - '**'
     tags-ignore:
@@ -16,11 +16,11 @@ env:
   GKE_ZONE: europe-north1-b
   REGISTRY: europe-north1-docker.pkg.dev
   REPOSITORY: dwk-docker-repo
-  TODO_APP_IMAGE_NAME: devopswk8s-ex308-todo-app
-  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex308-todo-backend
-  SERVICE: ex308
+  TODO_APP_IMAGE_NAME: devopswk8s-ex310-todo-app
+  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex310-todo-backend
+  SERVICE: ex310
   BRANCH: ${{ github.ref_name }}
-  DIRECTORY: "ex308"
+  DIRECTORY: "ex310"
 
 jobs:
   build-publish-deploy:
@@ -76,6 +76,7 @@ jobs:
         run: |-
           kubectl create namespace $NAMESPACE || true
           kubectl config set-context --current --namespace=$NAMESPACE
+          kubectl create secret generic $SERVICE-gcloud-secret --from-literal=GKE_SA_KEY='${{ secrets.GKE_SA_KEY }}' -n $NAMESPACE || true
           cd $DIRECTORY
           kustomize edit set namespace $NAMESPACE
           kustomize edit set image PROJECT/TODO_APP_IMAGE=$TODO_APP_IMAGE_TAG

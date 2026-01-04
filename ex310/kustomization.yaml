@@ -4,8 +4,10 @@ resources:
   - manifests/persistent-volume-claim.yaml
   - manifests/configmap.yaml
   - manifests/postgres-sts.yaml
-  - manifests/deployment.yaml
-  - manifests/service.yaml
+  - manifests/todo-app-deployment.yaml
+  - manifests/todo-backend-deployment.yaml
+  - manifests/todo-backend-service.yaml
+  - manifests/todo-app-service.yaml
   - manifests/gateway.yaml
   - manifests/route.yaml
   - manifests/add-todo-job.yaml

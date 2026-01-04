@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ex202
+  name: ex202-todo-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ex202
+      app: ex202-todo-app
   template:
     metadata:
       labels:
-        app: ex202
+        app: ex202-todo-app
     spec:
       volumes:
         - name: shared-volume
@@ -26,9 +26,3 @@ spec:
           volumeMounts:
             - name: shared-volume
               mountPath: /usr/src/app/files
-        - name: ex202-todo-backend
-          image: dilansachi/devopswk8s-ex202-todo-backend:1.0.0
-          imagePullPolicy: IfNotPresent
-          env:
-            - name: PORT
-              value: "3003"

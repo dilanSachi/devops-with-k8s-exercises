@@ -2,6 +2,7 @@ apiVersion: gateway.networking.k8s.io/v1beta1
 kind: HTTPRoute
 metadata:
   name: ex303-route
+  namespace: exercises
 spec:
   parentRefs:
     - name: ex303-gateway
@@ -11,12 +12,12 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: ex303-svc
+        - name: ex303-log-app-svc
           port: 2345
     - matches:
         - path:
             type: PathPrefix
             value: /pingpong
       backendRefs:
-        - name: ex303-svc
+        - name: ex303-ping-pong-app-svc
           port: 2346

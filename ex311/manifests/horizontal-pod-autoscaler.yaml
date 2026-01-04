@@ -1,13 +1,27 @@
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: ex311-dep-hpa
+  name: ex311-todo-app-dep-hpa
   namespace: project
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: ex311
+    name: ex311-todo-app
+  minReplicas: 1
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 50
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ex311-todo-backend-dep-hpa
+  namespace: project
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ex311-todo-backend
   minReplicas: 1
   maxReplicas: 6
   targetCPUUtilizationPercentage: 50

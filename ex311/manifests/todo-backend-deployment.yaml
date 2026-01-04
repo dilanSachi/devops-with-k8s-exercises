@@ -1,51 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ex311
+  name: ex311-todo-backend
   namespace: project
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ex311
+      app: ex311-todo-backend
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: ex311
+        app: ex311-todo-backend
     spec:
-      volumes:
-        - name: shared-volume
-          persistentVolumeClaim:
-            claimName: ex311-vol-claim
       containers:
-        - name: ex311-todo-app
-          image: PROJECT/TODO_APP_IMAGE
-          imagePullPolicy: IfNotPresent
-          env:
-            - name: PORT
-              value: "3002"
-            - name: IMAGE_FILE_PATH
-              valueFrom:
-                configMapKeyRef:
-                  name: ex311-config-map
-                  key: image_file_path
-            - name: IMAGE_RESOURCE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: ex311-config-map
-                  key: image_resource_url
-          volumeMounts:
-            - name: shared-volume
-              mountPath: /usr/src/app/files
-          resources:
-            limits:
-              cpu: "200m"
-              memory: "100Mi"
-            requests:
-              cpu: "50m"
-              memory: "25Mi"
         - name: ex311-todo-backend
           image: PROJECT/TODO_BACKEND_IMAGE
           imagePullPolicy: IfNotPresent

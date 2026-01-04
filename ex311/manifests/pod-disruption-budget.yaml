@@ -6,5 +6,7 @@ metadata:
 spec:
   maxUnavailable: 50%
   selector:
-    matchLabels:
-      app: ex311
+    matchExpressions:
+      - key: app
+        operator: In
+        values: [ "ex311-todo-backend", "ex311-todo-app" ]

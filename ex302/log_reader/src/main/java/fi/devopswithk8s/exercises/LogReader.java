@@ -40,7 +40,7 @@ public class LogReader {
         public void handle(HttpExchange exchange) throws IOException {
             String counter = "0";
             try {
-                HttpRequest request = HttpRequest.newBuilder().uri(new URI(System.getenv("PING_PONG_APP_URL"))).GET().build();
+                HttpRequest request = HttpRequest.newBuilder().uri(new URI(System.getenv("PING_PONG_APP_URL") + "/pings")).GET().build();
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 logger.log(Level.INFO, "Received num pings from ping pong app: " + response.body());
                 counter = response.body();
@@ -55,7 +55,10 @@ public class LogReader {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-            String response = "file content: " + fileContent + "\n" + "env variable: MESSAGE=" + System.getenv("MESSAGE") + "\n" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new java.util.Date()) + ": " + randomString + "\n" + "Ping / Pongs: " + counter;
+            FileInputStream fileInputStream = new FileInputStream("/usr/src/app/files/log.txt");
+            String logContent = new String(fileInputStream.readAllBytes());
+            fileInputStream.close();
+            String response = "file content: " + fileContent + "\n" + "env variable: MESSAGE=" + System.getenv("MESSAGE") + "\n" + logContent + "Ping / Pongs: " + counter;
             exchange.sendResponseHeaders(200, response.length());
             OutputStream os = exchange.getResponseBody();
             os.write(response.getBytes());

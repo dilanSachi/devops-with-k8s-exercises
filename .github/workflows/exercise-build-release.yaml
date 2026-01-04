@@ -3,7 +3,7 @@ name: Build & Release Exercise
 on:
   push:
     paths:
-      - 'ex401/**'
+      - 'ex402/**'
     branches:
       - '**'
     tags-ignore:
@@ -16,12 +16,12 @@ env:
   GKE_ZONE: europe-north1-b
   REGISTRY: europe-north1-docker.pkg.dev
   REPOSITORY: dwk-docker-repo
-  LOG_READER_IMAGE_NAME: devopswk8s-ex401-log-reader
-  LOG_WRITER_IMAGE_NAME: devopswk8s-ex401-log-writer
-  PING_PONG_APP_IMAGE_NAME: devopswk8s-ex401-ping-pong-application
-  SERVICE: ex401
+  LOG_READER_IMAGE_NAME: devopswk8s-ex402-log-reader
+  LOG_WRITER_IMAGE_NAME: devopswk8s-ex402-log-writer
+  PING_PONG_APP_IMAGE_NAME: devopswk8s-ex402-ping-pong-application
+  SERVICE: ex402
   BRANCH: ${{ github.ref_name }}
-  DIRECTORY: "ex401"
+  DIRECTORY: "ex402"
 
 jobs:
   build-publish-deploy:

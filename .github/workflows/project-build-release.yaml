@@ -1,9 +1,9 @@
-name: Build & Release Project
+name: Release application
 
 on:
   push:
     paths:
-      - 'ex312/**'
+      - 'ex306/**'
     branches:
       - '**'
     tags-ignore:
@@ -16,11 +16,11 @@ env:
   GKE_ZONE: europe-north1-b
   REGISTRY: europe-north1-docker.pkg.dev
   REPOSITORY: dwk-docker-repo
-  TODO_APP_IMAGE_NAME: devopswk8s-ex312-todo-app
-  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex312-todo-backend
-  SERVICE: ex312
+  TODO_APP_IMAGE_NAME: devopswk8s-ex306-todo-app
+  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex306-todo-backend
+  SERVICE: ex306
   BRANCH: ${{ github.ref_name }}
-  DIRECTORY: "ex312"
+  DIRECTORY: "ex306"
 
 jobs:
   build-publish-deploy:
@@ -31,14 +31,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: 'Set namespace'
-        run: |
-          if [[ "$BRANCH" = "main" ]]
-          then
-            echo "NAMESPACE=project" >> $GITHUB_ENV
-          else
-            echo "NAMESPACE=$BRANCH" >> $GITHUB_ENV
-          fi
       - uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GKE_SA_KEY }}'
@@ -73,14 +65,11 @@ jobs:
       - name: Set up Kustomize
         uses: imranismail/setup-kustomize@v2.1.0
       - name: Deploy
-        run: |
-          kubectl create namespace $NAMESPACE || true
-          kubectl config set-context --current --namespace=$NAMESPACE
-          kubectl create secret generic $SERVICE-gcloud-secret --from-literal=GKE_SA_KEY='${{ secrets.GKE_SA_KEY }}' -n $NAMESPACE || true
+        run: |-
           cd $DIRECTORY
-          kustomize edit set namespace $NAMESPACE
           kustomize edit set image PROJECT/TODO_APP_IMAGE=$TODO_APP_IMAGE_TAG
           kustomize edit set image PROJECT/TODO_BACKEND_IMAGE=$TODO_BACKEND_IMAGE_TAG
           kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment $SERVICE
-          kubectl get services -o wide
+          kubectl rollout status deployment $SERVICE-todo-app -nproject
+          kubectl rollout status deployment $SERVICE-todo-backend -nproject
+          kubectl get services -o wide -nproject

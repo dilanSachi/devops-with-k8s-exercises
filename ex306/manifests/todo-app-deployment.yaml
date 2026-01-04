@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ex306
+  name: ex306-todo-app
   namespace: project
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ex306
+      app: ex306-todo-app
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: ex306
+        app: ex306-todo-app
     spec:
       volumes:
         - name: shared-volume
@@ -39,24 +39,3 @@ spec:
           volumeMounts:
             - name: shared-volume
               mountPath: /usr/src/app/files
-        - name: ex306-todo-backend
-          image: PROJECT/TODO_BACKEND_IMAGE
-          imagePullPolicy: IfNotPresent
-          env:
-            - name: PORT
-              value: "3003"
-            - name: DB_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: ex306-config-map
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: ex306-config-map
-                  key: DB_PASSWORD
-            - name: DB_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: ex306-config-map
-                  key: DB_URL

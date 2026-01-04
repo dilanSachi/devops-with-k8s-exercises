@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex401-ping-pong-app
+  namespace: exercises
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex401-ping-pong-app
+  template:
+    metadata:
+      labels:
+        app: ex401-ping-pong-app
+    spec:
+      containers:
+        - name: ex401-ping-pong-application
+          image: PROJECT/PING_PONG_APP_IMAGE
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3003"
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: ex401-config-map
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: ex401-config-map
+                  key: DB_PASSWORD
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex401-config-map
+                  key: DB_URL
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            httpGet:
+              path: /healthz
+              port: 3003

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ex401-ping-pong-app-svc
+  namespace: exercises
+spec:
+  type: ClusterIP
+  selector:
+    app: ex401-ping-pong-app
+  ports:
+    - name: ping-pong-app
+      port: 2346
+      protocol: TCP
+      targetPort: 3003

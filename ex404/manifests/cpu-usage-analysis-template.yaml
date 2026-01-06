@@ -7,7 +7,7 @@ spec:
   metrics:
   - name: cpu-usage-analysis
     initialDelay: 2m
-    successCondition: result < 1
+    successCondition: result < 0.01
     provider:
       prometheus:
         address: http://kube-prometheus-stack-1767-prometheus.prometheus.svc.cluster.local:9090

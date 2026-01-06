@@ -63,7 +63,10 @@ public class TodoApp {
                     "  <input  name=\"todo\" id=\"todoinput\" type=\"text\"/>" +
                     "  <button type=\"submit\">Create ToDo</button>" +
                     "</form>" +
+                    "<b>Todo</b>" +
                     "<ul id=\"todoList\"></ul>" +
+                    "<b>Done</b>" +
+                    "<ul id=\"doneList\"></ul>" +
                     "<p>DevOps with Kubernetes 2025</p>" +
                     "</body>" +
                     "</html>" +
@@ -94,25 +97,56 @@ public class TodoApp {
                     "        console.log(e);" +
                     "      }" +
                     "    });" +
-                    "function renderList(items, ul) {" +
-                    "      ul.innerHTML = \"\";" +
+                    "function renderList(items, ulTodos, ulDone) {" +
+                    "      ulTodos.innerHTML = \"\";" +
+                    "      ulDone.innerHTML = \"\";" +
                     "      for (const item of items) {" +
                     "        const trimmed = item.trim();" +
                     "        if (!trimmed) continue;\n" +
+                    "        const splitted = trimmed.split(\"::\");" +
+                    "        if (splitted[2] == \"true\") continue;" +
                     "        const li = document.createElement(\"li\");" +
-                    "        li.textContent = trimmed;" +
-                    "        ul.appendChild(li);" +
+                    "        const text = document.createTextNode(splitted[1] + \" \");" +
+                    "        const btn = document.createElement(\"button\");" +
+                    "        btn.textContent = \"Mark as done\";" +
+                    "        btn.addEventListener(\"click\", async (ev) => {\n" +
+                    "          ev.preventDefault();" +
+                    "          try {" +
+                    "            const resp = await fetch(\"/todos/\" + splitted[0], {" +
+                    "              method: \"PUT\"" +
+                    "            });" +
+                    "            if (!resp.ok) throw new Error(\"HTTP \" + resp.status + \" \" + resp.statusText);" +
+                    "            loadTodos();" +
+                    "          } catch (e) {" +
+                    "            console.log(e);" +
+                    "          }" +
+                    "        });" +
+                    "        li.appendChild(text);" +
+                    "        li.appendChild(btn);" +
+                    "        ulTodos.appendChild(li);" +
+                    "      }" +
+                    "      for (const item of items) {" +
+                    "        const trimmed = item.trim();" +
+                    "        if (!trimmed) continue;\n" +
+                    "        const splitted = trimmed.split(\"::\");" +
+                    "        if (splitted[2] == \"false\") continue;" +
+                    "        const li = document.createElement(\"li\");" +
+                    "        const text = document.createTextNode(splitted[1] + \" \");" +
+                    "        li.appendChild(text);" +
+                    "        ulDone.appendChild(li);" +
                     "      }" +
                     "    }" +
                     "    async function loadTodos() {" +
-                    "      const ul = document.getElementById(\"todoList\");" +
-                    "      ul.innerHTML = \"\";" +
+                    "      const ulTodos = document.getElementById(\"todoList\");" +
+                    "      const ulDone = document.getElementById(\"doneList\");" +
+                    "      ulTodos.innerHTML = \"\";" +
+                    "      ulDone.innerHTML = \"\";" +
                     "      try {" +
                     "        const resp = await fetch(\"/gettodos\", { method: \"GET\" });" +
                     "        if (!resp.ok) throw new Error(\"HTTP \" + resp.status + \" \" + resp.statusText);" +
                     "        const text = await resp.text();" +
                     "        const items = text.split(\",\");" +
-                    "        renderList(items, ul);" +
+                    "        renderList(items, ulTodos, ulDone);" +
                     "      } catch (e) {" +
                     "        console.log(e);" +
                     "      }" +

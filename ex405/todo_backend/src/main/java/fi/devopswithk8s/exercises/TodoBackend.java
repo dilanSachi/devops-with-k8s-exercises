@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class TodoBackend {
@@ -100,7 +101,7 @@ public class TodoBackend {
         private void insertTodo(String newTodo) {
             try {
                 Statement st = getDbConnection().createStatement();
-                st.execute("INSERT INTO TODO (TODO) VALUES ('" + newTodo + "')");
+                st.execute("INSERT INTO TODO (TODO, DONE) VALUES ('" + newTodo + "', FALSE)");
                 st.close();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -112,10 +113,10 @@ public class TodoBackend {
     static class GetTodoHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            List<String> todos = getTodos();
+            List<TODO> todos = getTodos();
             String todoList = "";
             for (int i = 0; i < todos.size(); i++) {
-                todoList = todoList + todos.get(i);
+                todoList = todoList + todos.get(i).getId() + "::" + todos.get(i).getTodo() + "::" + todos.get(i).isDone();
                 if (i != todos.size() - 1) {
                     todoList = todoList + ",";
                 }
@@ -123,7 +124,7 @@ public class TodoBackend {
             log("INFO", "Responding todos: " + todoList);
             exchange.sendResponseHeaders(200, todoList.length());
             OutputStream outputStream = exchange.getResponseBody();
-            outputStream.write(todoList.getBytes());
+            outputStream.write((todoList).getBytes());
             outputStream.close();
         }
     }
@@ -131,35 +132,64 @@ public class TodoBackend {
     static class UpdateTodoHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            List<String> todos = getTodos();
-            String todoList = "";
-            for (int i = 0; i < todos.size(); i++) {
-                todoList = todoList + todos.get(i);
-                if (i != todos.size() - 1) {
-                    todoList = todoList + ",";
-                }
+            String[] paths = exchange.getRequestURI().toString().split("/");
+            String todoId = paths[paths.length - 1];
+            log("INFO", "Marking todo " + todoId + " as done");
+            try {
+                Statement st = getDbConnection().createStatement();
+                st.execute("UPDATE TODO SET DONE=TRUE where ID=" + todoId);
+            } catch (SQLException e) {
+                log("SEVERE", "Error occurred while marking todo " + todoId + " as done");
+                e.printStackTrace();
+                exchange.sendResponseHeaders(500, 0);
+                OutputStream outputStream = exchange.getResponseBody();
+                outputStream.close();
+                return;
             }
-            log("INFO", "Responding todos: " + todoList);
-            exchange.sendResponseHeaders(200, todoList.length());
+            exchange.sendResponseHeaders(200, 0);
             OutputStream outputStream = exchange.getResponseBody();
-            outputStream.write(todoList.getBytes());
             outputStream.close();
         }
     }
 
-    private static List<String> getTodos() {
+    private static List<TODO> getTodos() {
         try {
             Statement st = getDbConnection().createStatement();
-            ResultSet rs = st.executeQuery("SELECT TODO FROM TODO");
-            List<String> todos = new ArrayList<>();
+            ResultSet rs = st.executeQuery("SELECT ID, TODO, DONE FROM TODO");
+            List<TODO> todos = new ArrayList<>();
             while (rs.next()) {
-                todos.add(rs.getString("TODO"));
+                todos.add(new TODO(rs.getInt("ID"), rs.getString("TODO"),
+                        rs.getBoolean("DONE")));
             }
             rs.close();
             return todos;
         } catch (SQLException e) {
             log("SEVERE", e.getMessage());
             throw new RuntimeException();
+        }
+    }
+
+    private static class TODO {
+        int id;
+        String todo;
+        boolean done;
+
+        public TODO(int id, String todo, boolean done) {
+            this.id = id;
+            this.todo = todo;
+            this.done = done;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getTodo() {
+            return todo;
+        }
+
+        public boolean isDone() {
+            return done;
         }
     }
 

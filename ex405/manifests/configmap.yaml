@@ -9,8 +9,9 @@ data:
   init-db.sql: |-
     create table TODO
     (
-        id      int,
-        todo varchar
+        id      int primary key generated always as identity,
+        todo varchar,
+        done boolean
     );
   DB_USER: "postgres"
   DB_PASSWORD: "postgres_pass"

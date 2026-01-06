@@ -35,3 +35,10 @@ spec:
       backendRefs:
         - name: ex405-todo-backend-svc
           port: 2346
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /todos
+      backendRefs:
+        - name: ex405-todo-backend-svc
+          port: 2346

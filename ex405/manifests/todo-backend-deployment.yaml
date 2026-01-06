@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex405-todo-backend
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex405-todo-backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ex405-todo-backend
+    spec:
+      containers:
+        - name: ex405-todo-backend
+          image: PROJECT/TODO_BACKEND_IMAGE
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3003"
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: ex405-config-map
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: ex405-config-map
+                  key: DB_PASSWORD
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex405-config-map
+                  key: DB_URL
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "100Mi"
+            requests:
+              cpu: "50m"
+              memory: "25Mi"

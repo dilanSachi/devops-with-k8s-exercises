@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: ex405-resource-quota
+  namespace: project
+spec:
+  hard:
+    requests.cpu: "500m"
+    requests.memory: "500Mi"
+    limits.cpu: "750m"
+    limits.memory: "750Mi"

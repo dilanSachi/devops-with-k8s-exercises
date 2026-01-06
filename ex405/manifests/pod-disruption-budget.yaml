@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: ex405-dep-pdb
+  namespace: project
+spec:
+  maxUnavailable: 50%
+  selector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values: [ "ex405-todo-backend", "ex405-todo-app" ]

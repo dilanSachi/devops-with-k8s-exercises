@@ -1,7 +1,17 @@
 ## Ex4.06
 
 ### How to run
-Create a namespace `project` by `kubectl create namespace project`.
+* Create a namespace `project` by `kubectl create namespace project`.
+* You need to have NATS installed in the cluster before running the application.
+```
+helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+helm repo update
+helm install my-nats nats/nats
+```
+* Create a server in discord and get the webhook url. Store the url as a secret in the cluster.
+```
+kubectl create secret generic ex406-discord-webhook-secret --from-literal=DISCORD_WEBHOOK_URL='add-webhook-url-here' -n project
+```
 #### Build & run locally
 * Execute `./build.sh` inside the `ex406` directory. This will build the todo app and todo backend java projects, create jars and then will create docker images with the jar files encapsulated.
 * If you are using k3d, it will import the docker images into the registry as well.

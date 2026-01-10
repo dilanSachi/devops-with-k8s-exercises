@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex406-broadcaster-app
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex406-broadcaster-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ex406-broadcaster-app
+    spec:
+      containers:
+        - name: ex406-broadcaster-app
+          image: PROJECT/BROADCASTER_APP_IMAGE
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: NATS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex406-config-map
+                  key: nats_url
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "100Mi"
+            requests:
+              cpu: "50m"
+              memory: "25Mi"

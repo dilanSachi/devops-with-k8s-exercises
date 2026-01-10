@@ -16,7 +16,7 @@ public class TodoApp {
 
     static long lastDownloadedTime = 0;
     static String IMAGE_FILE_PATH = "";
-    private static final Logger logger = Logger.getLogger(TodoApp.class.getName());
+    private static final Logger logger = Logger.getLogger(fi.devopswithk8s.exercises.BroadcasterApp.class.getName());
 
     public static void main(String[] args) throws IOException {
         int port = 3000;

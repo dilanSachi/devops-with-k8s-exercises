@@ -9,31 +9,26 @@ import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TodoApp {
 
     static long lastDownloadedTime = 0;
     static String IMAGE_FILE_PATH = "";
-    static String BACKEND_URL = "";
-    private static final Logger logger = Logger.getLogger(fi.devopswithk8s.exercises.BroadcasterApp.class.getName());
 
     public static void main(String[] args) throws IOException {
         int port = 3000;
         try {
             port = Integer.parseInt(System.getenv("PORT"));
         } catch (NumberFormatException e) {
-            logger.log(Level.INFO, "PORT variable not found. Starting on default port " + port);
+            log("INFO", "PORT variable not found. Starting on default port " + port);
         }
         IMAGE_FILE_PATH = System.getenv("IMAGE_FILE_PATH");
-        BACKEND_URL = System.getenv("BACKEND_URL");
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/", new BodyHandler());
         server.createContext("/image", new ImageHandler());
         server.setExecutor(null);
         server.start();
-        logger.log(Level.INFO, "Todo App started in port " + port);
+        log("INFO", "Todo App started in port " + port);
     }
 
     static class BodyHandler implements HttpHandler {
@@ -48,7 +43,7 @@ public class TodoApp {
                 lastDownloadedTime = System.currentTimeMillis();
             } else if (System.currentTimeMillis() - lastDownloadedTime > 10 * 60 * 1000) {
                 if (!firstRequest) {
-                    logger.log(Level.INFO, "Time exceeded. Downloading file...");
+                    log("INFO", "Time exceeded. Downloading file...");
                     downloadImage();
                     firstRequest = true;
                 } else {
@@ -63,12 +58,15 @@ public class TodoApp {
                     "<body>" +
                     "" +
                     "<h1>The DevOps App</h1>" +
-                    "<img src=\"" + BACKEND_URL + "/image\" alt=\"Lorem Picsum\" style=\"width:500px;\">" +
+                    "<img src=\"/image\" alt=\"Lorem Picsum\" style=\"width:500px;\">" +
                     "<form id=\"todoForm\">" +
                     "  <input  name=\"todo\" id=\"todoinput\" type=\"text\"/>" +
                     "  <button type=\"submit\">Create ToDo</button>" +
                     "</form>" +
+                    "<b>Todo</b>" +
                     "<ul id=\"todoList\"></ul>" +
+                    "<b>Done</b>" +
+                    "<ul id=\"doneList\"></ul>" +
                     "<p>DevOps with Kubernetes 2025</p>" +
                     "</body>" +
                     "</html>" +
@@ -88,7 +86,7 @@ public class TodoApp {
                     "      console.log(\"Adding new todo\");" +
                     "      ev.preventDefault();" +
                     "      try {" +
-                    "        const resp = await fetch(\"" + BACKEND_URL + "/addtodo\", {" +
+                    "        const resp = await fetch(\"/addtodo\", {" +
                     "          method: \"POST\"," +
                     "          body: todo.value," +
                     "        });" +
@@ -99,25 +97,56 @@ public class TodoApp {
                     "        console.log(e);" +
                     "      }" +
                     "    });" +
-                    "function renderList(items, ul) {" +
-                    "      ul.innerHTML = \"\";" +
+                    "function renderList(items, ulTodos, ulDone) {" +
+                    "      ulTodos.innerHTML = \"\";" +
+                    "      ulDone.innerHTML = \"\";" +
                     "      for (const item of items) {" +
                     "        const trimmed = item.trim();" +
                     "        if (!trimmed) continue;\n" +
+                    "        const splitted = trimmed.split(\"::\");" +
+                    "        if (splitted[2] == \"true\") continue;" +
                     "        const li = document.createElement(\"li\");" +
-                    "        li.textContent = trimmed;" +
-                    "        ul.appendChild(li);" +
+                    "        const text = document.createTextNode(splitted[1] + \" \");" +
+                    "        const btn = document.createElement(\"button\");" +
+                    "        btn.textContent = \"Mark as done\";" +
+                    "        btn.addEventListener(\"click\", async (ev) => {\n" +
+                    "          ev.preventDefault();" +
+                    "          try {" +
+                    "            const resp = await fetch(\"/todos/\" + splitted[0], {" +
+                    "              method: \"PUT\"" +
+                    "            });" +
+                    "            if (!resp.ok) throw new Error(\"HTTP \" + resp.status + \" \" + resp.statusText);" +
+                    "            loadTodos();" +
+                    "          } catch (e) {" +
+                    "            console.log(e);" +
+                    "          }" +
+                    "        });" +
+                    "        li.appendChild(text);" +
+                    "        li.appendChild(btn);" +
+                    "        ulTodos.appendChild(li);" +
+                    "      }" +
+                    "      for (const item of items) {" +
+                    "        const trimmed = item.trim();" +
+                    "        if (!trimmed) continue;\n" +
+                    "        const splitted = trimmed.split(\"::\");" +
+                    "        if (splitted[2] == \"false\") continue;" +
+                    "        const li = document.createElement(\"li\");" +
+                    "        const text = document.createTextNode(splitted[1] + \" \");" +
+                    "        li.appendChild(text);" +
+                    "        ulDone.appendChild(li);" +
                     "      }" +
                     "    }" +
                     "    async function loadTodos() {" +
-                    "      const ul = document.getElementById(\"todoList\");" +
-                    "      ul.innerHTML = \"\";" +
+                    "      const ulTodos = document.getElementById(\"todoList\");" +
+                    "      const ulDone = document.getElementById(\"doneList\");" +
+                    "      ulTodos.innerHTML = \"\";" +
+                    "      ulDone.innerHTML = \"\";" +
                     "      try {" +
-                    "        const resp = await fetch(\"" + BACKEND_URL + "/gettodos\", { method: \"GET\" });" +
+                    "        const resp = await fetch(\"/gettodos\", { method: \"GET\" });" +
                     "        if (!resp.ok) throw new Error(\"HTTP \" + resp.status + \" \" + resp.statusText);" +
                     "        const text = await resp.text();" +
                     "        const items = text.split(\",\");" +
-                    "        renderList(items, ul);" +
+                    "        renderList(items, ulTodos, ulDone);" +
                     "      } catch (e) {" +
                     "        console.log(e);" +
                     "      }" +
@@ -140,7 +169,7 @@ public class TodoApp {
                 }
                 lastDownloadedTime = System.currentTimeMillis();
             } catch (IOException e) {
-                logger.log(Level.SEVERE, "Error occurred during image download.");
+                log("ERROR", "Error occurred during image download.");
                 e.printStackTrace();
             }
         }
@@ -157,6 +186,14 @@ public class TodoApp {
             OutputStream outputStream = exchange.getResponseBody();
             Files.copy(file.toPath(), outputStream);
             outputStream.close();
+        }
+    }
+
+    private static void log(String level, String message) {
+        if (level.equals("INFO")) {
+            System.out.println(message);
+        } else {
+            System.err.println(message);
         }
     }
 }

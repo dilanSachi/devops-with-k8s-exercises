@@ -11,12 +11,15 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
+
 import io.nats.service.*;
 import io.nats.client.*;
 
 public class TodoBackend {
 
     private static java.sql.Connection connection;
+    private static io.nats.client.Connection natsConnection;
 
     public static void main(String[] args) throws IOException, SQLException, InterruptedException {
         int port = 3000;
@@ -33,7 +36,13 @@ public class TodoBackend {
         server.setExecutor(null);
         server.start();
         initDBConnection();
+        initNATSConnection();
         log("INFO", "Todo Backend started in port " + port);
+    }
+
+    private static void initNATSConnection() throws InterruptedException, IOException {
+        natsConnection = Nats.connect(System.getenv("NATS_URL"));
+        System.out.println("Connected to nats");
     }
 
     private static void initDBConnection() throws SQLException, InterruptedException {
@@ -93,32 +102,39 @@ public class TodoBackend {
                 log("SEVERE", "Todo exceeds the allowed length limit (140): " + newTodo);
                 return;
             }
-            insertTodo(newTodo);
+            String id = UUID.randomUUID().toString();
             try {
-                sendStatusToNATS(newTodo);
+                insertTodo(newTodo, id);
+            } catch (SQLException e) {
+                exchange.sendResponseHeaders(500, 0);
+                OutputStream os = exchange.getResponseBody();
+                os.close();
+                throw new RuntimeException(e);
+            }
+            try {
+                sendStatusToNATS("create", id, newTodo);
             } catch (Exception e) {
                 log("SEVERE", "Error occurred while sending msg to nats: " + e.getMessage());
                 e.printStackTrace();
+                exchange.sendResponseHeaders(500, 0);
+                OutputStream os = exchange.getResponseBody();
+                os.close();
+                throw new RuntimeException(e);
             }
             exchange.sendResponseHeaders(200, 0);
             OutputStream os = exchange.getResponseBody();
             os.close();
         }
 
-        private void sendStatusToNATS(String newTodo) throws Exception {
-            io.nats.client.Connection natsConnection = Nats.connect(System.getenv("NATS_URL"));
-            System.out.println("Connected to nats");
-            natsConnection.publish("test-subject", ("Todo received" + newTodo).getBytes());
-        }
-
-        private void insertTodo(String newTodo) {
+        private void insertTodo(String newTodo, String id) throws SQLException {
             try {
                 Statement st = getDbConnection().createStatement();
-                st.execute("INSERT INTO TODO (TODO, DONE) VALUES ('" + newTodo + "', FALSE)");
+                st.execute("INSERT INTO TODO (ID, TODO, DONE) VALUES ('" + id + "','" + newTodo + "', FALSE)");
                 st.close();
             } catch (SQLException e) {
                 e.printStackTrace();
                 log("SEVERE", e.getMessage());
+                throw e;
             }
         }
     }
@@ -148,9 +164,13 @@ public class TodoBackend {
             String[] paths = exchange.getRequestURI().toString().split("/");
             String todoId = paths[paths.length - 1];
             log("INFO", "Marking todo " + todoId + " as done");
+            String newTodo = "";
             try {
                 Statement st = getDbConnection().createStatement();
-                st.execute("UPDATE TODO SET DONE=TRUE where ID=" + todoId);
+                st.execute("UPDATE TODO SET DONE=TRUE where ID='" + todoId + "'");
+                ResultSet rs = st.executeQuery("SELECT TODO FROM TODO WHERE ID='" + todoId + "'");
+                rs.next();
+                newTodo = rs.getString("TODO");
             } catch (SQLException e) {
                 log("SEVERE", "Error occurred while marking todo " + todoId + " as done");
                 e.printStackTrace();
@@ -158,6 +178,12 @@ public class TodoBackend {
                 OutputStream outputStream = exchange.getResponseBody();
                 outputStream.close();
                 return;
+            }
+            try {
+                sendStatusToNATS("update", todoId, newTodo);
+            } catch (Exception e) {
+                log("SEVERE", "Error occurred while sending msg to nats: " + e.getMessage());
+                e.printStackTrace();
             }
             exchange.sendResponseHeaders(200, 0);
             OutputStream outputStream = exchange.getResponseBody();
@@ -171,7 +197,7 @@ public class TodoBackend {
             ResultSet rs = st.executeQuery("SELECT ID, TODO, DONE FROM TODO");
             List<TODO> todos = new ArrayList<>();
             while (rs.next()) {
-                todos.add(new TODO(rs.getInt("ID"), rs.getString("TODO"),
+                todos.add(new TODO(rs.getString("ID"), rs.getString("TODO"),
                         rs.getBoolean("DONE")));
             }
             rs.close();
@@ -183,17 +209,17 @@ public class TodoBackend {
     }
 
     private static class TODO {
-        int id;
+        String id;
         String todo;
         boolean done;
 
-        public TODO(int id, String todo, boolean done) {
+        public TODO(String id, String todo, boolean done) {
             this.id = id;
             this.todo = todo;
             this.done = done;
         }
 
-        public int getId() {
+        public String getId() {
             return id;
         }
 
@@ -212,5 +238,11 @@ public class TodoBackend {
         } else {
             System.err.println(message);
         }
+    }
+
+    private static void sendStatusToNATS(String event, String id, String newTodo) throws Exception {
+        natsConnection.publish(event.equals("create") ? System.getenv("NATS_TODO_TOPIC"): System.getenv("NATS_DONE_TOPIC"),
+                ("{\"task\": \"" + newTodo + "\", \"done\":\"" +
+                (event.equals("create") ? "false": "true") + "\", \"id\": \"" + id + "\"}").getBytes());
     }
 }

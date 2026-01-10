@@ -8,6 +8,7 @@ def dockerImageName = project.getProperty("image_tag")
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 jar {

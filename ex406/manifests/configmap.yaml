@@ -7,10 +7,14 @@ data:
   image_file_path: "/usr/src/app/files/image.png"
   image_resource_url: "https://picsum.photos/1200"
   nats_url: "nats://my-nats:4222"
+  nats_todo_topic: "todos"
+  nats_done_topic: "done-todos"
+  nats_todo_queue: "todos-queue"
+  nats_done_queue: "done-queue"
   init-db.sql: |-
     create table TODO
     (
-        id      int primary key generated always as identity,
+        id      varchar primary key,
         todo varchar,
         done boolean
     );

@@ -42,6 +42,16 @@ spec:
                 configMapKeyRef:
                   name: ex406-config-map
                   key: nats_url
+            - name: NATS_TODO_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: ex406-config-map
+                  key: nats_todo_topic
+            - name: NATS_DONE_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: ex406-config-map
+                  key: nats_done_topic
           resources:
             limits:
               cpu: "200m"

@@ -50,3 +50,4 @@ This repo contains the exercises and projects done in the course [DevOps with Ku
 - [4.04](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/4.4/ex404)
 - [4.05](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/4.5/ex405)
 - [4.06](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/4.6/ex406)
+- [4.07](https://github.com/dilanSachi/devops-with-k8s-exercises/tree/4.7/ex407)

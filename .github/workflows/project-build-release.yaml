@@ -30,22 +30,14 @@ jobs:
           then
             echo "NAMESPACE=project-prod" >> $GITHUB_ENV
             echo "OVERLAY_PATH=prod" >> $GITHUB_ENV
-            echo "tagged prod"
-            echo "$REF_TYPE"
           else
             if [[ "$BRANCH" = "main" ]]
             then
               echo "NAMESPACE=project-staging" >> $GITHUB_ENV
               echo "OVERLAY_PATH=staging" >> $GITHUB_ENV
-              echo "$BRANCH"
-              echo "branch main"
-              echo "$REF_TYPE"
             else
               echo "NAMESPACE=$BRANCH-staging" >> $GITHUB_ENV
               echo "OVERLAY_PATH=staging" >> $GITHUB_ENV
-              echo "$BRANCH"
-              echo "branch stage"
-              echo "$REF_TYPE"
             fi
           fi
       - name: Login to Docker Hub
@@ -73,6 +65,11 @@ jobs:
           docker push $TODO_APP_IMAGE_TAG
           docker push $TODO_BACKEND_IMAGE_TAG
           docker push $BROADCASTER_APP_IMAGE_TAG
+      - name: Checkout main branch
+        if: env.REF_TYPE == 'tag'
+        run: |
+          git fetch
+          git checkout main
       - name: Set up Kustomize
         uses: imranismail/setup-kustomize@v2.1.0
       - name: Deploy

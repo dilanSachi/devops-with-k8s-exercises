@@ -1,18 +1,18 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./../../base
-  - backup-postgres-job.yaml
+- ./../../base
+- backup-postgres-job.yaml
 patches:
-  - path: configmap.yaml
+- path: configmap.yaml
 images:
 - name: PROJECT/BROADCASTER_APP_IMAGE
   newName: dilansachi/devopswk8s-ex409-broadcaster-app
-  newTag: main-d6a5e6dcba8fa4aafabffc682e5683e28e847375
+  newTag: 4.9-93eec57f4511ca7b56a17a2dae59691729a69b73
 - name: PROJECT/TODO_APP_IMAGE
   newName: dilansachi/devopswk8s-ex409-todo-app
-  newTag: main-d6a5e6dcba8fa4aafabffc682e5683e28e847375
+  newTag: 4.9-93eec57f4511ca7b56a17a2dae59691729a69b73
 - name: PROJECT/TODO_BACKEND_IMAGE
   newName: dilansachi/devopswk8s-ex409-todo-backend
-  newTag: main-d6a5e6dcba8fa4aafabffc682e5683e28e847375
+  newTag: 4.9-93eec57f4511ca7b56a17a2dae59691729a69b73
 namespace: project-prod

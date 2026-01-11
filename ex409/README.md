@@ -1,6 +1,6 @@
 ## Ex4.09
 
-### How to run
+### How to ru
 * Create a namespace `project` by `kubectl create namespace project`.
 * You need to have NATS installed in the cluster before running the application.
 ```

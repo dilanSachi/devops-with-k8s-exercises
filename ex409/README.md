@@ -1,7 +1,7 @@
 ## Ex4.09
 
-### How to ru
-* Create a namespace `project` by `kubectl create namespace project`.
+### How to run
+* Create a namespace `project-staging` by `kubectl create namespace project-staging`.
 * Install argo CRDs,
 ```
 kubectl create namespace argo-rollouts

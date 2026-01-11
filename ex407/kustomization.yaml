@@ -5,8 +5,8 @@ resources:
 - manifests/statefulset.yaml
 - manifests/configmap.yaml
 - manifests/persistent-vol-claim.yaml
-- manifests/ping-pong-app-deployment-rollout.yaml
-- manifests/log-app-deployment-rollout.yaml
+- manifests/ping-pong-app-deployment.yaml
+- manifests/log-app-deployment.yaml
 - manifests/log-app-service.yaml
 - manifests/ping-pong-app-service.yaml
 - manifests/gateway.yaml

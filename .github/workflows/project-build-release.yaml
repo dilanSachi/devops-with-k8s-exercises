@@ -13,6 +13,7 @@ env:
   SERVICE: ex409
   BRANCH: ${{ github.ref_name }}
   DIRECTORY: "ex409"
+  REF_TYPE: ${{ github.ref_type }}
 
 jobs:
   build-publish-deploy:
@@ -25,12 +26,12 @@ jobs:
         uses: actions/checkout@v4
       - name: 'Set namespace'
         run: |
-          if [[ "$github.ref_type" = "tag" ]]
+          if [[ "$REF_TYPE" = "tag" ]]
           then
             echo "NAMESPACE=project-prod" >> $GITHUB_ENV
             echo "OVERLAY_PATH=prod" >> $GITHUB_ENV
             echo "tagged prod"
-            echo "$github.ref_type"
+            echo "$REF_TYPE"
           else
             if [[ "$BRANCH" = "main" ]]
             then
@@ -38,13 +39,13 @@ jobs:
               echo "OVERLAY_PATH=staging" >> $GITHUB_ENV
               echo "$BRANCH"
               echo "branch main"
-              echo "$github.ref_type"
+              echo "$REF_TYPE"
             else
               echo "NAMESPACE=$BRANCH-staging" >> $GITHUB_ENV
               echo "OVERLAY_PATH=staging" >> $GITHUB_ENV
               echo "$BRANCH"
               echo "branch stage"
-              echo "$github.ref_type"
+              echo "$REF_TYPE"
             fi
           fi
       - name: Login to Docker Hub

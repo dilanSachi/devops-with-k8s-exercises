@@ -1,0 +1,44 @@
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: ex408-route
+  namespace: project
+spec:
+  parentRefs:
+    - name: ex408-gateway
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: ex408-todo-app-svc
+          port: 2345
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /image
+      backendRefs:
+        - name: ex408-todo-app-svc
+          port: 2345
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /gettodos
+      backendRefs:
+        - name: ex408-todo-backend-svc
+          port: 2346
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /addtodo
+      backendRefs:
+        - name: ex408-todo-backend-svc
+          port: 2346
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /todos
+      backendRefs:
+        - name: ex408-todo-backend-svc
+          port: 2346

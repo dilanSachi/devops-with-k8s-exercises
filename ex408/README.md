@@ -1,0 +1,27 @@
+## Ex4.08
+
+### How to run
+* Create a namespace `project` by `kubectl create namespace project`.
+* You need to have NATS installed in the cluster before running the application.
+```
+helm repo add nats https://nats-io.github.io/k8s/helm/charts/
+helm repo update
+helm install my-nats nats/nats
+```
+* Create a server in discord and get the webhook url. Store the url as a secret in the cluster.
+```
+kubectl create secret generic ex408-discord-webhook-secret --from-literal=DISCORD_WEBHOOK_URL='add-webhook-url-here' -n project
+```
+#### Build & run locally
+* Execute `./build.sh` inside the `ex408` directory. This will build the todo app and todo backend java projects, create jars and then will create docker images with the jar files encapsulated.
+* If you are using k3d, it will import the docker images into the registry as well.
+* Execute `kubectl apply -f manifests/` in the `ex408` directory to deploy the pod.
+#### Run using image in DockerHub
+* Execute `kubectl apply -f manifests/` to deploy the application.
+#### Deployment pipeline
+* Whenever a change is pushed `ex408/` directory, the GitHub actions will catch it and will trigger a new deployment build. This will be deployed in `project` namespace if pushed to the `main` branch. Otherwise, the namespace will have the branch-name.
+
+---
+
+* Server would be available in http://EXTERNAL-IP.
+* `EXTERNAL-IP` can be found from `kubectl get gateway ex408-gateway`

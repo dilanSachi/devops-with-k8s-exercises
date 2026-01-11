@@ -2,6 +2,11 @@
 
 ### How to ru
 * Create a namespace `project` by `kubectl create namespace project`.
+* Install argo CRDs,
+```
+kubectl create namespace argo-rollouts
+kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+```
 * You need to have NATS installed in the cluster before running the application.
 ```
 helm repo add nats https://nats-io.github.io/k8s/helm/charts/

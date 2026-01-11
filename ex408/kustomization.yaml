@@ -17,11 +17,11 @@ resources:
 images:
 - name: PROJECT/BROADCASTER_APP_IMAGE
   newName: dilansachi/devopswk8s-ex408-broadcaster-app
-  newTag: main-d6a5e6dcba8fa4aafabffc682e5683e28e847375
+  newTag: main-59bb43e2c75b62b47f4ed437921d274b9cf8a5fd
 - name: PROJECT/TODO_APP_IMAGE
   newName: dilansachi/devopswk8s-ex408-todo-app
-  newTag: main-d6a5e6dcba8fa4aafabffc682e5683e28e847375
+  newTag: main-59bb43e2c75b62b47f4ed437921d274b9cf8a5fd
 - name: PROJECT/TODO_BACKEND_IMAGE
   newName: dilansachi/devopswk8s-ex408-todo-backend
-  newTag: main-d6a5e6dcba8fa4aafabffc682e5683e28e847375
+  newTag: main-59bb43e2c75b62b47f4ed437921d274b9cf8a5fd
 namespace: project

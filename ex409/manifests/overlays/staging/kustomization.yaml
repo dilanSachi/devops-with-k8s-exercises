@@ -5,11 +5,11 @@ resources:
 images:
 - name: PROJECT/BROADCASTER_APP_IMAGE
   newName: dilansachi/devopswk8s-ex409-broadcaster-app
-  newTag: main-93575881392156b8d0e8c9f9ee00d81d21f0c588
+  newTag: main-5bf425e2872dc49e2d898cdd2cf30a9ef6911a3e
 - name: PROJECT/TODO_APP_IMAGE
   newName: dilansachi/devopswk8s-ex409-todo-app
-  newTag: main-93575881392156b8d0e8c9f9ee00d81d21f0c588
+  newTag: main-5bf425e2872dc49e2d898cdd2cf30a9ef6911a3e
 - name: PROJECT/TODO_BACKEND_IMAGE
   newName: dilansachi/devopswk8s-ex409-todo-backend
-  newTag: main-93575881392156b8d0e8c9f9ee00d81d21f0c588
+  newTag: main-5bf425e2872dc49e2d898cdd2cf30a9ef6911a3e
 namespace: project-staging

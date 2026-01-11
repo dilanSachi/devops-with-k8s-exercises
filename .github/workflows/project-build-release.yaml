@@ -64,8 +64,6 @@ jobs:
         uses: imranismail/setup-kustomize@v2.1.0
       - name: Deploy
         run: |-
-          kubectl create secret generic $SERVICE-gcloud-secret --from-literal=GKE_SA_KEY='${{ secrets.GKE_SA_KEY }}' -n $NAMESPACE || true
-          kubectl create secret generic $SERVICE-discord-webhook-secret --from-literal=DISCORD_WEBHOOK_URL='${{ secrets.DISCORD_WEBHOOK_URL }}' -n $NAMESPACE || true
           cd $DIRECTORY
           kustomize edit set namespace $NAMESPACE
           kustomize edit set image PROJECT/TODO_APP_IMAGE=$TODO_APP_IMAGE_TAG

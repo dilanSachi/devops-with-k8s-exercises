@@ -31,3 +31,5 @@ create jars and then will create docker images with the jar files encapsulated.
 
 * Server would be available in http://EXTERNAL-IP.
 * `EXTERNAL-IP` can be found from `kubectl get gateway ex408-gateway`
+
+![ArgoCD](/ex408/ArgoCD.png)

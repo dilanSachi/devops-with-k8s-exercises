@@ -14,5 +14,5 @@ spec:
     namespace: project-staging
   syncPolicy:
     automated:
-      prune: <strong>true</strong>
-      selfHeal: <strong>true</strong>
+      prune: true
+      selfHeal: true

@@ -15,11 +15,11 @@ helm install my-nats nats/nats
 ```
 * Create GKE secret in the cluster.
 ```
-kubectl create secret generic ex409-gcloud-secret --from-literal=GKE_SA_KEY='add-gke-secret-here' -n project
+kubectl create secret generic ex409-gcloud-secret --from-literal=GKE_SA_KEY='add-gke-secret-here' -n project-staging
 ```
-* Create a server in discord and get the webhook url. Store the url as a secret in the cluster.
+* Create a server in discord and create a webhook and get the webhook url. Store the url as a secret in the cluster.
 ```
-kubectl create secret generic ex409-discord-webhook-secret --from-literal=DISCORD_WEBHOOK_URL='add-webhook-url-here' -n project
+kubectl create secret generic ex409-discord-webhook-secret --from-literal=DISCORD_WEBHOOK_URL='add-webhook-url-here' -n project-staging
 ```
 #### Build & run locally
 * Execute `./build.sh` inside the `ex409` directory. This will build the todo app, broadcaster app and todo backend java projects, 
@@ -34,5 +34,6 @@ create jars and then will create docker images with the jar files encapsulated.
 
 ---
 
+* When you are ready to proceed to production deployment, repeat the above steps for `project-prod` namespace and create a tag.
 * Server would be available in http://EXTERNAL-IP.
 * `EXTERNAL-IP` can be found from `kubectl get gateway ex409-gateway`

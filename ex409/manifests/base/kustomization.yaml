@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- persistent-volume-claim.yaml
+- configmap.yaml
+- postgres-sts.yaml
+- todo-app-deployment.yaml
+- todo-backend-deployment.yaml
+- todo-backend-service.yaml
+- todo-app-service.yaml
+- broadcaster-app-deployment.yaml
+- broadcaster-app-service.yaml
+- gateway.yaml
+- route.yaml
+- add-todo-job.yaml

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ex409-todo-backend-svc
+  namespace: project
+spec:
+  type: ClusterIP
+  selector:
+    app: ex409-todo-backend
+  ports:
+    - name: todo-backend
+      port: 2346
+      protocol: TCP
+      targetPort: 3003

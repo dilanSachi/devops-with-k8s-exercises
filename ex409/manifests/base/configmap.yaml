@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ex409-config-map
+  namespace: project
+data:
+  image_file_path: "/usr/src/app/files/image.png"
+  image_resource_url: "https://picsum.photos/1200"
+  nats_url: "nats://my-nats:4222"
+  nats_todo_topic: "todos"
+  nats_done_topic: "done-todos"
+  nats_todo_queue: "todos-queue"
+  nats_done_queue: "done-queue"
+  discord_publish: "false"
+  init-db.sql: |-
+    create table TODO
+    (
+        id      varchar primary key,
+        todo varchar,
+        done boolean
+    );
+  DB_USER: "postgres"
+  DB_PASSWORD: "postgres_pass"
+  DB_URL: "ex409-postgres-svc/"
+  add-todo.sh: |-
+    #!/usr/bin/env bash
+    set -euo pipefail
+    URL="https://en.wikipedia.org/wiki/Special:Random"
+    random_url="$(
+    curl -sI "$URL" \
+    | awk 'BEGIN{IGNORECASE=1} /^Location:/ {sub(/\r$/, "", $2); print $2}' | tr '\n' ' '
+    )"
+    export PGPASSWORD='postgres_pass';
+    psql postgres://ex409-postgres-svc:5432 -U postgres -c "INSERT INTO TODO(TODO) VALUES('Read $random_url')"
+    echo "Added todo to read $random_url"
+  backup-psql.sh: |-
+    #!/usr/bin/env bash
+    set -e
+    BACKUP_FILE_NAME="backup-$(date +%s).sql"
+    apt-get update -y
+    apt-get install postgresql-client -y
+    pg_dump -v postgres://postgres:postgres_pass@ex409-postgres-svc:5432/postgres > /etc/db-backup/$BACKUP_FILE_NAME
+    cp $(realpath /etc/secret-volume/GKE_SA_KEY) keyfile
+    gcloud auth activate-service-account --key-file=keyfile
+    gcloud config set project dwk-gke-482611
+    gcloud storage cp /etc/db-backup/$BACKUP_FILE_NAME gs://dwk-bucket/$BACKUP_FILE_NAME
+    echo "Uploaded $BACKUP_FILE_NAME to google storage"

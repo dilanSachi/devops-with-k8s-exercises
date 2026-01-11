@@ -3,20 +3,16 @@ name: Release application
 on:
   push:
     paths:
-      - 'ex408/**'
-    branches:
-      - '**'
-    tags-ignore:
-      - '**'
+      - 'ex409/**'
   workflow_dispatch:
 
 env:
-  TODO_APP_IMAGE_NAME: devopswk8s-ex408-todo-app
-  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex408-todo-backend
-  BROADCASTER_APP_IMAGE_NAME: devopswk8s-ex408-broadcaster-app
-  SERVICE: ex408
+  TODO_APP_IMAGE_NAME: devopswk8s-ex409-todo-app
+  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex409-todo-backend
+  BROADCASTER_APP_IMAGE_NAME: devopswk8s-ex409-broadcaster-app
+  SERVICE: ex409
   BRANCH: ${{ github.ref_name }}
-  DIRECTORY: "ex408"
+  DIRECTORY: "ex409"
 
 jobs:
   build-publish-deploy:
@@ -31,10 +27,13 @@ jobs:
         run: |
           if [[ "$BRANCH" = "main" ]]
           then
-            echo "NAMESPACE=project" >> $GITHUB_ENV
+            echo "NAMESPACE=project-staging" >> $GITHUB_ENV
+            echo "$NAMESPACE"
           else
-            echo "NAMESPACE=$BRANCH" >> $GITHUB_ENV
+            echo "NAMESPACE=$BRANCH-staging" >> $GITHUB_ENV
+            echo "$NAMESPACE"
           fi
+          exit 1
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -64,7 +63,7 @@ jobs:
         uses: imranismail/setup-kustomize@v2.1.0
       - name: Deploy
         run: |-
-          cd $DIRECTORY
+          cd $DIRECTORY/manifests/overlays
           kustomize edit set namespace $NAMESPACE
           kustomize edit set image PROJECT/TODO_APP_IMAGE=$TODO_APP_IMAGE_TAG
           kustomize edit set image PROJECT/TODO_BACKEND_IMAGE=$TODO_BACKEND_IMAGE_TAG

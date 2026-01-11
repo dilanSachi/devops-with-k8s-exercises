@@ -1,0 +1,34 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ex409-add-todo-job
+  namespace: project
+spec:
+  schedule: "01 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: ex409-psql-job-runner
+              image: postgres:alpine
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/bash
+                - -c
+                - apk --no-cache add curl; cp /tmp/add-todo.sh /etc/pre-install/; chmod +x /etc/pre-install/add-todo.sh; /etc/pre-install/add-todo.sh
+              volumeMounts:
+                - name: script-vol
+                  mountPath: "/tmp/"
+                - name: pre-install
+                  mountPath: /etc/pre-install
+          restartPolicy: OnFailure
+          volumes:
+            - name: pre-install
+              emptyDir: { }
+            - name: script-vol
+              configMap:
+                name: ex409-config-map
+                items:
+                  - key: "add-todo.sh"
+                    path: "add-todo.sh"

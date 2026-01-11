@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ex409-config-map
+  namespace: project
+data:
+  discord_publish: "true"

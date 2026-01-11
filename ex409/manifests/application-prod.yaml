@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ex409-production
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/dilanSachi/devops-with-k8s-exercises/
+    path: ex409/manifests/overlays/prod
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: project-prod
+  syncPolicy:
+    automated:
+      prune: <strong>true</strong>
+      selfHeal: <strong>true</strong>

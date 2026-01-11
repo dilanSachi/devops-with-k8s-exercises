@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex409-broadcaster-app
+  namespace: project
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ex409-broadcaster-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ex409-broadcaster-app
+    spec:
+      containers:
+        - name: ex409-broadcaster-app
+          image: PROJECT/BROADCASTER_APP_IMAGE
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: secret-volume
+              readOnly: true
+              mountPath: /etc/secret-volume
+          env:
+            - name: NATS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex409-config-map
+                  key: nats_url
+            - name: NATS_TODO_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: ex409-config-map
+                  key: nats_todo_topic
+            - name: NATS_DONE_TOPIC
+              valueFrom:
+                configMapKeyRef:
+                  name: ex409-config-map
+                  key: nats_done_topic
+            - name: NATS_TODO_QUEUE
+              valueFrom:
+                configMapKeyRef:
+                  name: ex409-config-map
+                  key: nats_todo_queue
+            - name: NATS_DONE_QUEUE
+              valueFrom:
+                configMapKeyRef:
+                  name: ex409-config-map
+                  key: nats_done_queue
+            - name: DISCORD_PUBLISH
+              valueFrom:
+                configMapKeyRef:
+                  name: ex409-config-map
+                  key: discord_publish
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "100Mi"
+            requests:
+              cpu: "50m"
+              memory: "25Mi"
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: ex409-discord-webhook-secret

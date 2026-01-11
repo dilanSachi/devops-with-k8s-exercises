@@ -1,4 +1,4 @@
-## Ex4.08
+## Ex4.09
 
 ### How to run
 * Create a namespace `project` by `kubectl create namespace project`.
@@ -10,26 +10,24 @@ helm install my-nats nats/nats
 ```
 * Create GKE secret in the cluster.
 ```
-kubectl create secret generic ex408-gcloud-secret --from-literal=GKE_SA_KEY='add-gke-secret-here' -n project
+kubectl create secret generic ex409-gcloud-secret --from-literal=GKE_SA_KEY='add-gke-secret-here' -n project
 ```
 * Create a server in discord and get the webhook url. Store the url as a secret in the cluster.
 ```
-kubectl create secret generic ex408-discord-webhook-secret --from-literal=DISCORD_WEBHOOK_URL='add-webhook-url-here' -n project
+kubectl create secret generic ex409-discord-webhook-secret --from-literal=DISCORD_WEBHOOK_URL='add-webhook-url-here' -n project
 ```
 #### Build & run locally
-* Execute `./build.sh` inside the `ex408` directory. This will build the todo app, broadcaster app and todo backend java projects, 
+* Execute `./build.sh` inside the `ex409` directory. This will build the todo app, broadcaster app and todo backend java projects, 
 create jars and then will create docker images with the jar files encapsulated.
 * If you are using k3d, it will import the docker images into the registry as well.
-* Execute `kubectl apply -f manifests/` in the `ex408` directory to deploy the pods.
+* Execute `kubectl apply -f manifests/` in the `ex409` directory to deploy the pods.
 #### Run using image in DockerHub
 * Execute `kubectl apply -f manifests/` to deploy the application.
 #### Deployment pipeline
-* Whenever a change is pushed `ex408/` directory, the GitHub actions will catch it and will push the images to docker hub.
-* If you are using ArgoCD, you need to create the app with directory as `ex408` in order catch the changes.
+* Whenever a change is pushed `ex409/` directory, the GitHub actions will catch it and will push the images to docker hub.
+* If you are using ArgoCD, you need to create the app with directory as `ex409` in order catch the changes.
 
 ---
 
 * Server would be available in http://EXTERNAL-IP.
-* `EXTERNAL-IP` can be found from `kubectl get gateway ex408-gateway`
-
-![ArgoCD](/ex408/ArgoCD.png)
+* `EXTERNAL-IP` can be found from `kubectl get gateway ex409-gateway`

@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./../../base
+images:
+- name: PROJECT/BROADCASTER_APP_IMAGE
+  newName: dilansachi/devopswk8s-ex409-broadcaster-app
+  newTag: main-d6a5e6dcba8fa4aafabffc682e5683e28e847375
+- name: PROJECT/TODO_APP_IMAGE
+  newName: dilansachi/devopswk8s-ex409-todo-app
+  newTag: main-d6a5e6dcba8fa4aafabffc682e5683e28e847375
+- name: PROJECT/TODO_BACKEND_IMAGE
+  newName: dilansachi/devopswk8s-ex409-todo-backend
+  newTag: main-d6a5e6dcba8fa4aafabffc682e5683e28e847375
+namespace: project-staging

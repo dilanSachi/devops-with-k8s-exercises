@@ -14,11 +14,11 @@ resources:
 images:
 - name: PROJECT/LOG_READER_IMAGE
   newName: dilansachi/devopswk8s-ex407-log-reader
-  newTag: main-3d43bef2d347d31bd366cbcae75289387ebff631
+  newTag: main-cbdc501a74e76db04dc9ab0afd76272c76a6c656
 - name: PROJECT/LOG_WRITER_IMAGE
   newName: dilansachi/devopswk8s-ex407-log-writer
-  newTag: main-3d43bef2d347d31bd366cbcae75289387ebff631
+  newTag: main-cbdc501a74e76db04dc9ab0afd76272c76a6c656
 - name: PROJECT/PING_PONG_APP_IMAGE
   newName: dilansachi/devopswk8s-ex407-ping-pong-application
-  newTag: main-3d43bef2d347d31bd366cbcae75289387ebff631
+  newTag: main-cbdc501a74e76db04dc9ab0afd76272c76a6c656
 namespace: exercises

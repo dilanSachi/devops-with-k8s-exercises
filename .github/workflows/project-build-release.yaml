@@ -3,16 +3,16 @@ name: Release application
 on:
   push:
     paths:
-      - 'ex409/**'
+      - 'ex410/**'
   workflow_dispatch:
 
 env:
-  TODO_APP_IMAGE_NAME: devopswk8s-ex409-todo-app
-  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex409-todo-backend
-  BROADCASTER_APP_IMAGE_NAME: devopswk8s-ex409-broadcaster-app
-  SERVICE: ex409
+  TODO_APP_IMAGE_NAME: devopswk8s-ex410-todo-app
+  TODO_BACKEND_IMAGE_NAME: devopswk8s-ex410-todo-backend
+  BROADCASTER_APP_IMAGE_NAME: devopswk8s-ex410-broadcaster-app
+  SERVICE: ex410
   BRANCH: ${{ github.ref_name }}
-  DIRECTORY: "ex409"
+  DIRECTORY: "ex410"
   REF_TYPE: ${{ github.ref_type }}
 
 jobs:
@@ -59,28 +59,34 @@ jobs:
       - name: Build images
         run: |
           cd $DIRECTORY
-          bash build.sh "1" $TODO_APP_IMAGE_TAG $TODO_BACKEND_IMAGE_TAG $BROADCASTER_APP_IMAGE_TAG
+#          bash build.sh "1" $TODO_APP_IMAGE_TAG $TODO_BACKEND_IMAGE_TAG $BROADCASTER_APP_IMAGE_TAG
       - name: Publish images
         run: |
-          docker push $TODO_APP_IMAGE_TAG
-          docker push $TODO_BACKEND_IMAGE_TAG
-          docker push $BROADCASTER_APP_IMAGE_TAG
-      - name: Checkout main branch
-        if: env.REF_TYPE == 'tag'
-        run: |
-          git fetch
-          git checkout main
-      - name: Set up Kustomize
-        uses: imranismail/setup-kustomize@v2.1.0
-      - name: Deploy
-        run: |-
-          cd $DIRECTORY/manifests/overlays/$OVERLAY_PATH
-          kustomize edit set namespace $NAMESPACE
-          kustomize edit set image PROJECT/TODO_APP_IMAGE=$TODO_APP_IMAGE_TAG
-          kustomize edit set image PROJECT/TODO_BACKEND_IMAGE=$TODO_BACKEND_IMAGE_TAG
-          kustomize edit set image PROJECT/BROADCASTER_APP_IMAGE=$BROADCASTER_APP_IMAGE_TAG
-      - name: Commit kustomization.yaml to GitHub
-        uses: EndBug/add-and-commit@v9
+          echo $(pwd)
+#          docker push $TODO_APP_IMAGE_TAG
+#          docker push $TODO_BACKEND_IMAGE_TAG
+#          docker push $BROADCASTER_APP_IMAGE_TAG
+      - name: Check out configurations repository
+        uses: actions/checkout@v4
         with:
-          add: '${{ env.DIRECTORY }}/manifests/overlays/${{ env.OVERLAY_PATH }}/kustomization.yaml'
-          message: New version released ${{ github.sha }}
+          repository: dilanSachi/devops-with-k8s-configuration
+          token: ${{ secrets.GIT_PAT }}
+#      - name: Checkout main branch
+#        if: env.REF_TYPE == 'tag'
+#        run: |
+#          git fetch
+#          git checkout main
+#      - name: Set up Kustomize
+#        uses: imranismail/setup-kustomize@v2.1.0
+#      - name: Deploy
+#        run: |-
+#          cd $DIRECTORY/manifests/overlays/$OVERLAY_PATH
+#          kustomize edit set namespace $NAMESPACE
+#          kustomize edit set image PROJECT/TODO_APP_IMAGE=$TODO_APP_IMAGE_TAG
+#          kustomize edit set image PROJECT/TODO_BACKEND_IMAGE=$TODO_BACKEND_IMAGE_TAG
+#          kustomize edit set image PROJECT/BROADCASTER_APP_IMAGE=$BROADCASTER_APP_IMAGE_TAG
+#      - name: Commit kustomization.yaml to GitHub
+#        uses: EndBug/add-and-commit@v9
+#        with:
+#          add: '${{ env.DIRECTORY }}/manifests/overlays/${{ env.OVERLAY_PATH }}/kustomization.yaml'
+#          message: New version released ${{ github.sha }}

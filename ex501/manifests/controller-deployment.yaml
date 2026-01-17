@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dummysite-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dummysite-controller
+  template:
+    metadata:
+      labels:
+        app: dummysite-controller
+    spec:
+      serviceAccountName: controller-manager
+      containers:
+        - name: dummysite-controller
+          image: dilansachi/devopswk8s-ex501-dummysite-controller:1.0.3

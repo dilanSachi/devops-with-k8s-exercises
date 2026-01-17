@@ -1,0 +1,9 @@
+apiVersion: stable.dwk.stable.dwk/v1
+kind: DummySite
+metadata:
+  labels:
+    app.kubernetes.io/name: controller
+    app.kubernetes.io/managed-by: kustomize
+  name: dummysite-wikipediasite
+spec:
+  website_url: "https://en.wikipedia.org/wiki/Kubernetes"

@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- manifests/statefulset.yaml
+- manifests/configmap.yaml
+- manifests/persistent-vol-claim.yaml
+- manifests/greeter-app-deployment.yaml
+- manifests/ping-pong-app-deployment.yaml
+- manifests/log-app-deployment.yaml
+- manifests/greeter-app-service.yaml
+- manifests/log-app-service.yaml
+- manifests/ping-pong-app-service.yaml
+- manifests/gateway.yaml
+- manifests/route.yaml
+images:
+- name: PROJECT/LOG_READER_IMAGE
+  newName: dilansachi/devopswk8s-ex503-log-reader
+  newTag: 1.0.0
+- name: PROJECT/LOG_WRITER_IMAGE
+  newName: dilansachi/devopswk8s-ex503-log-writer
+  newTag: 1.0.0
+- name: PROJECT/PING_PONG_APP_IMAGE
+  newName: dilansachi/devopswk8s-ex503-ping-pong-application
+  newTag: 1.0.0
+- name: PROJECT/GREETER_APP_IMAGE
+  newName: dilansachi/devopswk8s-ex503-greeter-application
+  newTag: 1.0.0
+namespace: exercises

@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex503-log-app
+  namespace: exercises
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex503-log-app
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ex503-log-app
+    spec:
+      volumes:
+        - name: shared-volume
+          persistentVolumeClaim:
+            claimName: ex503-vol-claim
+        - name: config-vol
+          configMap:
+            name: ex503-config-map
+            items:
+              - key: "information.txt"
+                path: "information.txt"
+      containers:
+        - name: ex503-log-reader
+          image: PROJECT/LOG_READER_IMAGE
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3002"
+            - name: MESSAGE
+              valueFrom:
+                configMapKeyRef:
+                  name: ex503-config-map
+                  key: MESSAGE
+            - name: PING_PONG_APP_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex503-config-map
+                  key: PING_PONG_APP_URL
+            - name: GREETER_APP_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ex503-config-map
+                  key: GREETER_APP_URL
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files
+            - name: config-vol
+              mountPath: "/config-vol"
+              readOnly: true
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            httpGet:
+              path: /healthz
+              port: 3002
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            httpGet:
+              path: /healthz
+              port: 3002
+        - name: ex503-log-writer
+          image: PROJECT/LOG_WRITER_IMAGE
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: shared-volume
+              mountPath: /usr/src/app/files

@@ -7,8 +7,8 @@ data:
   MESSAGE: "hello world"
   information.txt: |-
     this text is from file
-  PING_PONG_APP_URL: "http://ex503-gateway-istio:80"
-  GREETER_APP_URL: "http://ex503-gateway-istio:80"
+  PING_PONG_APP_URL: "http://ex503-ping-pong-app-svc:2346"
+  GREETER_APP_URL: "http://ex503-greeter-app-svc:2347"
   init-db.sql: |-
     create table PINGPONGCOUNTER
     (

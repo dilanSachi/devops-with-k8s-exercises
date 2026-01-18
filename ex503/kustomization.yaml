@@ -12,6 +12,7 @@ resources:
 - manifests/ping-pong-app-service.yaml
 - manifests/gateway.yaml
 - manifests/route.yaml
+- manifests/greeter-route.yaml
 images:
 - name: PROJECT/LOG_READER_IMAGE
   newName: dilansachi/devopswk8s-ex503-log-reader

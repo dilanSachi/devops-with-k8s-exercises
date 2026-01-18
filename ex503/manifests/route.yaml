@@ -37,13 +37,6 @@ spec:
     - matches:
         - path:
             type: PathPrefix
-            value: /greeting
-      backendRefs:
-        - name: ex503-greeter-app-svc
-          port: 2347
-    - matches:
-        - path:
-            type: PathPrefix
             value: /
       backendRefs:
         - name: ex503-log-app-svc

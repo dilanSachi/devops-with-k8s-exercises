@@ -1,19 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ex503-greeter-app
+  name: ex503-greeter-app-v1
   namespace: exercises
+  labels:
+    app: ex503-greeter-app
+    version: v2
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: ex503-greeter-app
+      version: v1
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
         app: ex503-greeter-app
+        version: v1
     spec:
       containers:
         - name: ex503-greeter-application
@@ -24,6 +29,50 @@ spec:
               value: "3004"
             - name: GREET_VERSION
               value: "01"
+          readinessProbe:
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            httpGet:
+              path: /healthz
+              port: 3004
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            httpGet:
+              path: /healthz
+              port: 3004
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex503-greeter-app-v2
+  namespace: exercises
+  labels:
+    app: ex503-greeter-app
+    version: v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex503-greeter-app
+      version: v2
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ex503-greeter-app
+        version: v2
+    spec:
+      containers:
+        - name: ex503-greeter-application
+          image: PROJECT/GREETER_APP_IMAGE
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PORT
+              value: "3004"
+            - name: GREET_VERSION
+              value: "02"
           readinessProbe:
             initialDelaySeconds: 5
             periodSeconds: 10

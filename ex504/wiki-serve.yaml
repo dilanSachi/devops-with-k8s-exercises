@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ex504-wiki-pages-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ex504-wiki-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ex504-wiki-server
+  template:
+    metadata:
+      labels:
+        app: ex504-wiki-server
+    spec:
+      initContainers:
+        - name: init-wiki-page-fetcher
+          image: curlimages/curl:8.5.0
+          command:
+            - /bin/sh
+            - -c
+            - |
+              mkdir -p /wiki/public/www
+              curl -s https://en.wikipedia.org/wiki/Kubernetes > /wiki/public/www/index.html
+              echo "Kubernetes wiki page fetched successfully"
+          volumeMounts:
+            - name: ex504-wiki-storage
+              mountPath: /wiki
+      containers:
+        - name: nginx-wiki-server
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: ex504-wiki-storage
+              mountPath: /usr/share/nginx/html
+              subPath: public/www
+        - name: random-wiki-page-fetcher
+          image: curlimages/curl:8.5.0
+          command:
+            - /bin/sh
+            - -c
+            - |
+              while true; do
+                sleep_time=$((5 + RANDOM % 11))m
+                echo "Sleeping for ${sleep_time} before next random wiki page fetch"
+                sleep $sleep_time
+                URL="https://en.wikipedia.org/wiki/Special:Random"
+                random_url="$(curl -sI "$URL" | awk 'BEGIN{IGNORECASE=1} /^Location:/ {sub(/\r$/, "", $2); print $2}' | tr '\n' ' ')"
+                filename=random-wiki.html
+                curl -s $random_url > /wiki/public/www/$filename
+                echo "Fetched random wiki page: $random_url -> $filename"
+              done
+          volumeMounts:
+            - name: ex504-wiki-storage
+              mountPath: /wiki
+      volumes:
+        - name: ex504-wiki-storage
+          persistentVolumeClaim:
+            claimName: ex504-wiki-pages-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ex504-wiki-server-service
+spec:
+  selector:
+    app: ex504-wiki-server
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
